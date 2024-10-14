@@ -32,7 +32,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
  10/13/2024OT: transfer over PedroPath TeleOp from previous Pedropath tuning
  10/13/2024WT: transfer PedroPath tuning info
  10/14/2024MT/WT: add manual driving, not using PedroPath Follower
-
+ 10/24/2024WT: correct HardwareLED class, rename in AdafruitLED object name
 
  */
 
@@ -51,6 +51,9 @@ public class TeleOpV1 extends OpMode {
 
     enum State{
         START,
+        INTAKE,
+        TRANSFER,
+        OUTTAKE,
     }
     State state = State.START;
 
@@ -77,31 +80,33 @@ public class TeleOpV1 extends OpMode {
         robot.imu.resetYaw();      //reset the IMU/Gyro angle with each match.
         runtime.reset();
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         //Important Step 2: Get access to a list of Expansion Hub Modules to enable changing caching methods.
         //List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-        for (LynxModule hub : allHubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
+//        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+//        for (LynxModule hub : allHubs) {
+//            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+//        }
+//
+//        follower.startTeleopDrive();
+//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+//        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
+//        Drawing.sendPacket();
 
-        follower.startTeleopDrive();
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
-        Drawing.sendPacket();
 
 
-
-        telemetry.addData(">", "Hardware Initialized");
-        telemetry.update();
+//        telemetry.addData(">", "Hardware Initialized");
+//        telemetry.update();
     }
 
     @Override
     public void init_loop() {
-        telemetry.addData("Present Heading by IMU in degree = ", "(%.1f)", robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-        telemetry.addData("Robot Driving Orientation = ", drivingOrientation);
-        telemetry.update();
+//        telemetry.addData("Present Heading by IMU in degree = ", "(%.1f)", robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+//        telemetry.addData("Robot Driving Orientation = ", drivingOrientation);
+//        telemetry.update();
+
+        robot.AdafruitLED.LEDinitReady();
     }
 
     @Override
@@ -114,11 +119,11 @@ public class TeleOpV1 extends OpMode {
 
     @Override
     public void loop() {
-        bulkReadTELEOP();
-        telemetry.addData("State = ", state);
-        telemetry.addData("Runtime = ", "(%.1f)", getRuntime());
-        telemetry.addData("Robot Driving Orientation = ", drivingOrientation);
-        telemetry.addData("Present Heading by IMU in degree = ", "(%.1f)", imuAngle);
+//        bulkReadTELEOP();
+//        telemetry.addData("State = ", state);
+//        telemetry.addData("Runtime = ", "(%.1f)", getRuntime());
+//        telemetry.addData("Robot Driving Orientation = ", drivingOrientation);
+//        telemetry.addData("Present Heading by IMU in degree = ", "(%.1f)", imuAngle);
          //telemetry.addData("Time in State = ", 0);
         //telemetry.addData("lastTime = ", lastTime);
 
@@ -127,15 +132,32 @@ public class TeleOpV1 extends OpMode {
 
         switch (state) {
             case START:
+                if(gamepad1.y){
+                    robot.Outtake.highBasket();
+                }
+                else if(gamepad1.x){
+                    robot.Outtake.lowBasket();
+                }
+                else if(gamepad1.a){
+                    robot.Outtake.groundPositionOpen();
+                }
+                break;
+            case INTAKE:
+
+                break;
+            case TRANSFER:
+
+                break;
+            case OUTTAKE:
 
                 break;
         }
 
         //Drivetrain Movement:
         //MANUAL DRIVE for Mecanum wheel drive.
-        y = gamepad1.left_stick_y;           // Remember,joystick value is reversed!
-        x = -gamepad1.left_stick_x;
-        rx = -gamepad1.right_stick_x;
+        y = -gamepad1.left_stick_y;           // Remember,joystick value is reversed!
+        x = gamepad1.left_stick_x;
+        rx = gamepad1.right_stick_x;
 
         //Cancel angle movement of gamepad left stick, make move move either up/down or right/left
         if (Math.abs(y) >= Math.abs(x)) {
