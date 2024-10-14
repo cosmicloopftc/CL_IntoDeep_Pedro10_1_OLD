@@ -81,7 +81,7 @@ public class ThreeWheelLocalizer extends Localizer {
         //leftEncoderPose = new Pose(-18.5/25.4 - 0.1, 164.4/25.4, 0);
         //rightEncoderPose = new Pose(-18.4/25.4 - 0.1, -159.6/25.4, 0);
         //strafeEncoderPose = new Pose(0*(-107.9/25.4+8)+-107.9/25.4+0.25, -1.1/25.4-0.23, Math.toRadians(90));
-
+// TODO
         //BASED ON OLD ROBOT
         leftEncoderPose = new Pose(0, -4.5, 0);
         rightEncoderPose = new Pose(0, 4.5, 0);
@@ -96,9 +96,9 @@ public class ThreeWheelLocalizer extends Localizer {
         strafeEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));
 
         // TODO***: reverse any encoders necessary
-//        leftEncoder.setDirection(Encoder.REVERSE);
-//        rightEncoder.setDirection(Encoder.REVERSE);
-//        strafeEncoder.setDirection(Encoder.FORWARD);
+        leftEncoder.setDirection(Encoder.REVERSE);
+        rightEncoder.setDirection(Encoder.REVERSE);
+        strafeEncoder.setDirection(Encoder.FORWARD);
 
         setStartPose(setStartPose);
         timer = new NanoTimer();

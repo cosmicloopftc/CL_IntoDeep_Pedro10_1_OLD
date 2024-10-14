@@ -32,7 +32,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
  10/13/2024OT: transfer over PedroPath TeleOp from previous Pedropath tuning
  10/13/2024WT: transfer PedroPath tuning info
  10/14/2024MT/WT: add manual driving, not using PedroPath Follower
-
+ 10/24/2024WT: correct HardwareLED class, rename in AdafruitLED object name
 
  */
 
@@ -51,6 +51,11 @@ public class TeleOpV1 extends OpMode {
 
     enum State{
         START,
+        INTAKE,
+        TRANSFER,
+        OUTTAKE_READY,
+        OUTTAKE,
+        READY_DOWN
     }
     State state = State.START;
 
@@ -61,7 +66,7 @@ public class TeleOpV1 extends OpMode {
     String drivingOrientation = "robotOriented";                //TODO: as default for Eduardo, but will also reset in init as well.
     double lastTime;
     double imuAngle;
-
+    String outtakeOption = "";
 //Declare variables for standard driving--not using PedroPath follower method (using Learn JAVA for FTC book)
     double y, x, rx, powerShift;
     //double newForward = 0, newRight = 0, driveTheta = 0, r = 0, powerShift = 0;
@@ -77,31 +82,33 @@ public class TeleOpV1 extends OpMode {
         robot.imu.resetYaw();      //reset the IMU/Gyro angle with each match.
         runtime.reset();
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         //Important Step 2: Get access to a list of Expansion Hub Modules to enable changing caching methods.
         //List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-        for (LynxModule hub : allHubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
+//        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+//        for (LynxModule hub : allHubs) {
+//            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+//        }
+//
+//        follower.startTeleopDrive();
+//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+//        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
+//        Drawing.sendPacket();
 
-        follower.startTeleopDrive();
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
-        Drawing.sendPacket();
 
 
-
-        telemetry.addData(">", "Hardware Initialized");
-        telemetry.update();
+//        telemetry.addData(">", "Hardware Initialized");
+//        telemetry.update();
     }
 
     @Override
     public void init_loop() {
-        telemetry.addData("Present Heading by IMU in degree = ", "(%.1f)", robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-        telemetry.addData("Robot Driving Orientation = ", drivingOrientation);
-        telemetry.update();
+//        telemetry.addData("Present Heading by IMU in degree = ", "(%.1f)", robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+//        telemetry.addData("Robot Driving Orientation = ", drivingOrientation);
+//        telemetry.update();
+
+        robot.AdafruitLED.LEDinitReady();
     }
 
     @Override
@@ -114,11 +121,11 @@ public class TeleOpV1 extends OpMode {
 
     @Override
     public void loop() {
-        bulkReadTELEOP();
-        telemetry.addData("State = ", state);
-        telemetry.addData("Runtime = ", "(%.1f)", getRuntime());
-        telemetry.addData("Robot Driving Orientation = ", drivingOrientation);
-        telemetry.addData("Present Heading by IMU in degree = ", "(%.1f)", imuAngle);
+//        bulkReadTELEOP();
+//        telemetry.addData("State = ", state);
+//        telemetry.addData("Runtime = ", "(%.1f)", getRuntime());
+//        telemetry.addData("Robot Driving Orientation = ", drivingOrientation);
+//        telemetry.addData("Present Heading by IMU in degree = ", "(%.1f)", imuAngle);
          //telemetry.addData("Time in State = ", 0);
         //telemetry.addData("lastTime = ", lastTime);
 
@@ -127,15 +134,80 @@ public class TeleOpV1 extends OpMode {
 
         switch (state) {
             case START:
+                if(gamepad1.y || outtakeOption.equals("start")) {
+                    robot.Outtake.groundPositionOpen();
+                    outtakeOption = "";
+                }
+                else if(gamepad1.left_bumper){
+                    robot.Outtake.groundPositionClose();
+                }
+                else if(gamepad1.a) {
+                    outtakeOption = "lowBasket";
+                    state = State.OUTTAKE_READY;
+                }
+                else if(gamepad1.x) {
+                    outtakeOption = "highBasket";
+                    state = State.OUTTAKE_READY;
+                }
+                break;
+            case INTAKE:
 
+                break;
+            case TRANSFER:
+
+                break;
+            case OUTTAKE_READY:
+                robot.Outtake.readyPosition();
+                if(robot.Outtake.outtakeLeftSlide.getCurrentPosition()>400){
+                    state = State.OUTTAKE;
+                }
+                break;
+
+            case OUTTAKE:
+                if (outtakeOption.equals("lowBasket")){
+                    robot.Outtake.lowBasket();
+                    if (gamepad1.b){
+                        robot.Outtake.openClaw();
+                    }
+                }
+                if (outtakeOption.equals("highBasket")){
+                    robot.Outtake.leftSlideSetPositionPower(3000,0.6);
+                    robot.Outtake.rightSlideSetPositionPower(3000,0.6);
+                    if (robot.Outtake.outtakeLeftSlide.getCurrentPosition()>2000){
+                        robot.Outtake.highBasket();
+                    }
+                    if (gamepad1.b){
+                        robot.Outtake.openClaw();
+                    }
+                }
+                if (gamepad1.dpad_down){
+                    if (outtakeOption.equals("lowBasket")){
+                        resetRuntime();
+                        robot.Outtake.leftOuttakeArm.setPosition(0.98);
+                        robot.Outtake.rightOuttakeArm.setPosition(0.02);
+                        if (getRuntime() > 0.1){
+                            state = State.READY_DOWN;
+                        }
+                    }
+                    else{
+                        state = State.READY_DOWN;
+                    }
+                }
+                break;
+            case READY_DOWN:
+                robot.Outtake.readyPosition();
+                if(robot.Outtake.outtakeLeftSlide.getCurrentPosition()<600){
+                    outtakeOption = "start";
+                    state = State.START;
+                }
                 break;
         }
 
         //Drivetrain Movement:
         //MANUAL DRIVE for Mecanum wheel drive.
-        y = gamepad1.left_stick_y;           // Remember,joystick value is reversed!
-        x = -gamepad1.left_stick_x;
-        rx = -gamepad1.right_stick_x;
+        y = -gamepad1.left_stick_y;           // Remember,joystick value is reversed!
+        x = gamepad1.left_stick_x;
+        rx = gamepad1.right_stick_x;
 
         //Cancel angle movement of gamepad left stick, make move move either up/down or right/left
         if (Math.abs(y) >= Math.abs(x)) {
