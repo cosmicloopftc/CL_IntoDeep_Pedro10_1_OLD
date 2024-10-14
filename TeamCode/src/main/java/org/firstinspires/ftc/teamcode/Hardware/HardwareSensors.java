@@ -1,29 +1,38 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import android.graphics.Color;
+
 
 //modified from FTC Thunderbolts (Sacramento, CA) mentor's program structure
 
 public class HardwareSensors {
-//    private DcMotor Intake_Motor = null;
+    public DistanceSensor sensorColorDistance;
+    public ColorSensor sensorColor;
+
 
     /*Constructor*/
     public HardwareSensors() {
     }
 
+
     /* Initialize standard Hardware interface */
     public void init(HardwareMap hardwareMap)    {
         //Save reference to Hardware map
 
-//example:  map and setup mode of Intake motor
-//        Intake_Motor = hardwareMap.get(DcMotor.class, "Intake_Motor");
-//        Intake_Motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        Intake_Motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        Intake_Motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        Intake_Motor.setDirection(DcMotor.Direction.FORWARD);
-//        Intake_Motor.setPower(0);
+        //TODO: example in main class:         robot.Sensor.LEDGreen.setState(true);
+        //if red, green = false, then state is off.        if red, green = true, then state is orange
 
+        // get a reference to both color sensors.
+        sensorColor = hardwareMap.get(ColorSensor.class, "sensorColor");
+
+        // get a reference to the distance sensors that share the same names.
+        sensorColorDistance = hardwareMap.get(DistanceSensor.class, "sensorColor");
 
     }
 

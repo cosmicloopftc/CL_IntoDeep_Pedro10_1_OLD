@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.Hardware;
+//This is similar to "TestProgrammingBoard" class file for testing hardware in last season
+
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -19,7 +21,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 public class HardwareRobot {
 //**ADD assignment of variables here for subsequent connected device.
-
 /* example use of enum from FTC Thunderbolts (Sacramento, CA) mentor's program structure
     enum hwMapState {
         DRIVETRAIN_MOTOR_ONLY,
@@ -47,15 +48,19 @@ public class HardwareRobot {
     public HardwareHang Hang = null;
     public HardwareSensors Sensor = null;
     public HardwareGamePadLED GamePadLED = null;
+    public HardwareLED AdafruitLED = null;
 
 
-//**ADD on subsequent connected device.
+
+    //**ADD on subsequent connected device.
     boolean drivetrainConnected = true;
-    boolean intakeConnected = true;
-    boolean outtakeConnected = false;
+    boolean intakeConnected = false;
+    boolean outtakeConnected = true;
     boolean hangConnected = false;
     boolean sensorConnected = false;
     boolean gamePadLEDConnected = false;
+    boolean AdafruitLEDConnected = true;
+
 
     List<LynxModule> allHubs = null;
     LynxModule CTRLHub = null;
@@ -121,9 +126,14 @@ public class HardwareRobot {
             GamePadLED.init(hardwareMap);
         }
 
+        if (AdafruitLEDConnected) {
+            AdafruitLED = new HardwareLED();
+            AdafruitLED.init(hardwareMap);
+        }
+
 
 //?unknown source        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
-        batteryVoltageSensor = hardwareMap.voltageSensor.get("Expansion Hub 2");       //GeorgeFIRST kickoff video
+        //batteryVoltageSensor = hardwareMap.voltageSensor.get("Expansion Hub 2");       //GeorgeFIRST kickoff video
 
     }
 
