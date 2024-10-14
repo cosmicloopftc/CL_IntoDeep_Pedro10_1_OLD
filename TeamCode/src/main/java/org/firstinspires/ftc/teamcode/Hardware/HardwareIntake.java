@@ -11,13 +11,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class HardwareIntake {
 
-    public DcMotor Intake_Slides = null;
+    public DcMotor intakeSlides = null;
 
 
-    public CRServo Intake_LeftWheel = null;
-    public CRServo Intake_RightWheel = null;
-    public Servo Intake_LeftTilt = null;
-    public Servo Intake_RightTilt = null;
+    public CRServo intakeLeftWheel = null;
+    public CRServo intakeRightWheel = null;
+    public Servo intakeLeftTilt = null;
+    public Servo intakeRightTilt = null;
     //Servo Test
 //    public Servo Servo_Test = null;
 
@@ -31,21 +31,21 @@ public class HardwareIntake {
         //Save reference to Hardware map
 
         //map and setup mode of Intake Slide Motor
-        Intake_Slides = hardwareMap.get(DcMotor.class, "Intake_Slides");
+        intakeSlides = hardwareMap.get(DcMotor.class, "Intake_Slides");
         //intake slide motor behaviors
-        Intake_Slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Intake_Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Intake_Slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        Slider_Motor_Right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //        Slider_Motor_Left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Intake_Slides.setDirection(DcMotor.Direction.FORWARD); //TODO: reverse or not?????
-        Intake_Slides.setPower(0);
+        intakeSlides.setDirection(DcMotor.Direction.FORWARD); //TODO: reverse or not?????
+        intakeSlides.setPower(0);
 
         //map and setup mode of Intake Continuous Servos
-        Intake_LeftWheel = hardwareMap.get(CRServo.class, "Intake_LeftWheel");
-        Intake_RightWheel = hardwareMap.get(CRServo.class, "Intake_RightWheel");
-        Intake_LeftTilt = hardwareMap.get(Servo.class, "Intake_LeftTilt");
-        Intake_RightTilt = hardwareMap.get(Servo.class, "Intake_RightTilt");
+        intakeLeftWheel = hardwareMap.get(CRServo.class, "Intake_LeftWheel");
+        intakeRightWheel = hardwareMap.get(CRServo.class, "Intake_RightWheel");
+        intakeLeftTilt = hardwareMap.get(Servo.class, "Intake_LeftTilt");
+        intakeRightTilt = hardwareMap.get(Servo.class, "Intake_RightTilt");
 
 
 
@@ -66,24 +66,46 @@ public class HardwareIntake {
 
     //TODO: Method for entire intake process
     //public method (function) for intaking sample
-    public void IntakeIN () {
-        Intake_LeftWheel.setPower(1);
-        Intake_RightWheel.setPower(-1);
+    public void intakeSlideSetPositionPower(
+            int DesiredSliderPosition,
+            double SliderPower){
+
+        intakeSlides.setTargetPosition(DesiredSliderPosition);
+        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intakeSlides.setPower(SliderPower);
+    }
+
+    //public method (function) for intaking in sample
+    public void intakeIN () {
+        intakeLeftWheel.setPower(1);
+        intakeRightWheel.setPower(-1);
     }
 
 
     //public method (function) for spitting out sample
-    public void IntakeOUT() {
-        Intake_LeftWheel.setPower(-1);
-        Intake_RightWheel.setPower(1);
+    public void intakeOUT() {
+        intakeLeftWheel.setPower(-1);
+        intakeRightWheel.setPower(1);
     }
 
     //public method (function) for stopping the intake
-    public void IntakeSTOP() {
-        Intake_LeftWheel.setPower(0);
-        Intake_RightWheel.setPower(0);
+    public void intakeSTOP() {
+        intakeLeftWheel.setPower(0);
+        intakeRightWheel.setPower(0);
     }
 
+    //method for the retracted position of the intake slides
+    public void intakeSlideIN() {
+        intakeSlideSetPositionPower(0,0); //TODO: set power
+    }
 
+    //method for the extended position of the intake slides
+    public void intakeSlideOUT() {
+        intakeSlideSetPositionPower(0,0); //TODO: set position and power
+    }
 
+    public void transferIntake(){ //TODO: finish
+        intakeSlideIN();
+
+    }
 }
