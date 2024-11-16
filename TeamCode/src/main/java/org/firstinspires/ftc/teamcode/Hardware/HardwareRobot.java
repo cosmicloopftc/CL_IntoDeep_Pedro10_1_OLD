@@ -48,7 +48,8 @@ public class HardwareRobot {
     public HardwareHang hang = null;
     public HardwareSensors sensor = null;
     public HardwareGamePadLED gamePadLED = null;
-    public HardwareLED AdafruitLED = null;
+    public HardwareLED AdafruitLED = new HardwareLED();
+
 
     //**ADD on subsequent connected device.
     boolean drivetrainConnected = false;
@@ -70,6 +71,8 @@ public class HardwareRobot {
     public HardwareRobot() {
 
     }
+
+
 
 
     /* Initialize standard Hardware interface */
@@ -129,9 +132,13 @@ public class HardwareRobot {
 
 
 //?unknown source        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
-        batteryVoltageSensor = hardwareMap.voltageSensor.get("Expansion Hub 2");       //GeorgeFIRST kickoff video
+    //    batteryVoltageSensor = hardwareMap.voltageSensor.get("Expansion Hub 2");       //GeorgeFIRST kickoff video
 
     }
+
+
+
+
 
 
     public void start(){

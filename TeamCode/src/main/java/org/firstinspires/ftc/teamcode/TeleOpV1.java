@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -8,12 +10,17 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.w8wjb.ftc.AdafruitNeoDriver;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Hardware.HardwareLED;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.Hardware.HardwareRobot;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.PoseUpdater;
@@ -39,11 +46,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
 @TeleOp(group="Primary", name= "TeleOpV1.0")
 public class TeleOpV1 extends OpMode {
     private Follower follower;
+    public DigitalChannel LEDrightGreen;
+    public DigitalChannel LEDrightRed;
     private PoseUpdater poseUpdater;
     private DashboardPoseTracker dashboardPoseTracker;
     private Telemetry telemetry;
 
-
+    public AdafruitNeoDriver neopixels;
     HardwareRobot robot = new HardwareRobot();
 
     enum State{
@@ -59,16 +68,23 @@ public class TeleOpV1 extends OpMode {
     double lastTime;
     double imuAngle;
 
+//    public AdafruitNeoDriver neopixels;
+
 
 
 
     @Override
     public void init() {
+
+
+
+//        neopixels = hardwareMap.get(AdafruitNeoDriver.class, "neopixels");
+//        neopixels.setNumberOfPixels(NUM_PIXELS);
        // poseUpdater = new PoseUpdater(hardwareMap);
        // dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
         //follower = new Follower(hardwareMap);
 
-        //robot.init(hardwareMap);   //note hardwareMap is default and part of FTC Robot Controller HardwareMap class
+        robot.init(hardwareMap);   //note hardwareMap is default and part of FTC Robot Controller HardwareMap class
 //        robot.imu.resetYaw();      //reset the IMU/Gyro angle with each match.
 //        runtime.reset();
 
@@ -82,13 +98,12 @@ public class TeleOpV1 extends OpMode {
 //        }
 
    //     follower.startTeleopDrive();
-       // telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+     //   telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     //    Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
    //     Drawing.sendPacket();
 
 //        telemetry.addData(">", "Hardware Initialized");
 //        telemetry.update();
-
 
     }
 
@@ -98,15 +113,23 @@ public class TeleOpV1 extends OpMode {
       //  telemetry.addData("Present Heading by IMU in degree = ", "(%.1f)", robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
       //  telemetry.addData("Robot Driving Orientation = ", drivingOrientation);
 
-        //status light
-//        try {
-//            robot.AdafruitLED.LEDinitReady();
-//        } catch (Exception e) {
-//            System.out.println();
-//        }
+
+
+
+
         robot.AdafruitLED.LEDinitReady();
 
+//        robot.AdafruitLED.LEDleft2Green.setState(true);
+//        robot.AdafruitLED.LEDleft2Red.setState(false);
+
+
+
+
+
+
 //        telemetry.update();
+   //     robot.AdafruitLED.LEDrightGreen.setMode(DigitalChannel.Mode.INPUT);
+ //       robot.AdafruitLED.LEDrightRed.setMode(DigitalChannel.Mode.OUTPUT);
     }
 
     @Override
@@ -119,6 +142,12 @@ public class TeleOpV1 extends OpMode {
 
     @Override
     public void loop() {
+
+
+        robot.AdafruitLED.LEDinitError();
+/*
+        neopixels.fill(Color.rgb(0, 255, 0));
+        neopixels.show();
         bulkReadTELEOP();
         telemetry.addData("State = ", state);
         telemetry.addData("Runtime = ", "(%.1f)", getRuntime());
@@ -149,6 +178,8 @@ public class TeleOpV1 extends OpMode {
         Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
         Drawing.sendPacket();
         telemetry.update();
+        */
+
     }
 
 

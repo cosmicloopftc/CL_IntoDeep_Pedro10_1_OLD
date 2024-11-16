@@ -3,7 +3,7 @@ repositories {
     google() // Needed for androidx
 
     maven { url = 'https://maven.brott.dev/' }
-    maven {url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'}
+    maven {url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'}
 }
 
 dependencies {
@@ -34,5 +34,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
     implementation 'com.w8wjb.ftc:ftc-neodriver:1.0-SNAPSHOT'
+
 }
 
