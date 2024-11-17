@@ -169,7 +169,14 @@ public class TeleOpV1 extends OpMode {
                 }
                 break;
             case INTAKE:
-
+                if(gamepad1.dpad_up){
+                    robot.Intake.intakeSlideOUT();
+                    //robot.Intake.intakeIN();
+                }
+                if(gamepad1.dpad_down){
+                    robot.Intake.intakeSlideIN();
+                    //robot.Intake.intakeOUT();
+                }
                 break;
             case TRANSFER:
 
