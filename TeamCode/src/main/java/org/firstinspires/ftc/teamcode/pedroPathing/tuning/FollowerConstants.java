@@ -33,8 +33,8 @@ public class FollowerConstants {
     //TODO***: change below for our old robot
     //private static double xMovement = 81.34056;
     //private static double yMovement = 65.43028;
-    private static double xMovement = 56.30806;
-    private static double yMovement = 39.49151;
+    private static double xMovement = 57.29327;  // old robot: 56.30806
+    private static double yMovement = 43.7724;  // old robot: 39.49151
 
     private static double[] convertToPolar = Point.cartesianToPolar(xMovement, -yMovement);
     public static Vector frontLeftVector = MathFunctions.normalizeVector(new Vector(convertToPolar[0],convertToPolar[1]));
@@ -105,7 +105,7 @@ public class FollowerConstants {
 
     // Mass of robot in kilograms
     //TODO***: change below for our old robot
-    public static double mass = 10.65942;
+    public static double mass = 12.25;
 
     // Centripetal force to power scaling
     //TODO***: change below for our old robot
@@ -116,14 +116,14 @@ public class FollowerConstants {
     // if not negative, then the robot thinks that its going to go faster under 0 power
     //TODO***: change below for our old robot
     //public static double forwardZeroPowerAcceleration = -34.62719;
-    public static double forwardZeroPowerAcceleration = -49.26724;
+    public static double forwardZeroPowerAcceleration = -36.27323;   // old robot: -49.26724
 
 
     // Acceleration of the drivetrain when power is cut in inches/second^2 (should be negative)
     // if not negative, then the robot thinks that its going to go faster under 0 power
     //TODO***: change below for our old robot
     //public static double lateralZeroPowerAcceleration = -78.15554;
-    public static double lateralZeroPowerAcceleration = -71.07201;
+    public static double lateralZeroPowerAcceleration = -79.72813;  // -77.175   -84.1407  -77.8687
 
 
     // A multiplier for the zero power acceleration to change the speed the robot decelerates at

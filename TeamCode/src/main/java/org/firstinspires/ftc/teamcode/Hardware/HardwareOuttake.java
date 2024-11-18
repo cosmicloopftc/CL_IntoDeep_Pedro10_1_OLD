@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 //modified from FTC Thunderbolts (Sacramento, CA) mentor's program structure
 
 public class HardwareOuttake {
-//    private DcMotor Intake_Motor = null;
+    //    private DcMotor Intake_Motor = null;
     public DcMotor outtakeLeftSlide = null;
     public DcMotor outtakeRightSlide = null;
 
@@ -72,10 +72,10 @@ public class HardwareOuttake {
 
 
     public void openClaw(){
-        claw.setPosition(0.2);
+        claw.setPosition(0.17);
     }
     public void closeClaw(){
-        claw.setPosition(0);
+        claw.setPosition(0.32);
     }
     public void groundPositionOpen(){
         leftSlideSetPositionPower(0,0.6);
@@ -106,10 +106,10 @@ public class HardwareOuttake {
         rightSlideSetPositionPower(970,0.6);
     }
     public void highBasket(){
-        leftOuttakeArm.setPosition(0.2);
-        rightOuttakeArm.setPosition(0.8);
-        leftSlideSetPositionPower(3000,0.6);
-        rightSlideSetPositionPower(3000,0.6);
+        leftOuttakeArm.setPosition(0.22);
+        rightOuttakeArm.setPosition(0.78);
+        leftSlideSetPositionPower(3400,0.6);
+        rightSlideSetPositionPower(3400,0.6);
     }
     public void lowChamber(){ //Not able to do this with current V1 robot
 //        leftSlideSetPositionPower(0,0);
@@ -127,13 +127,13 @@ public class HardwareOuttake {
     public void highChamberFinish(){
         leftSlideSetPositionPower(900,0.6);
         rightSlideSetPositionPower(900,0.6);
-        leftOuttakeArm.setPosition(0);
-        rightOuttakeArm.setPosition(1);
+        //leftOuttakeArm.setPosition(0);
+        //rightOuttakeArm.setPosition(1);
     }
     public void wallIntake(){
         leftSlideSetPositionPower(0,0.6);
         rightSlideSetPositionPower(0,0.6);
-        leftOuttakeArm.setPosition(0);
-        rightOuttakeArm.setPosition(1);
+        leftOuttakeArm.setPosition(0.05);
+        rightOuttakeArm.setPosition(0.95);
     }
 }
