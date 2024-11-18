@@ -109,6 +109,7 @@ public class TeleOpV1 extends OpMode {
 //        telemetry.update();
 
         robot.AdafruitLED.LEDinitReady();
+
     }
 
     @Override
@@ -135,12 +136,12 @@ public class TeleOpV1 extends OpMode {
         switch (state) {
             case START:
                 if(gamepad1.dpad_up){
-                    robot.Intake.intakeSlideOUT();
-                    //robot.Intake.intakeIN();
+                    //robot.Intake.intakeSlideOUT();
+                    robot.Intake.intakeIN();
                 }
                 if(gamepad1.dpad_down){
-                    robot.Intake.intakeSlideIN();
-                    //robot.Intake.intakeOUT();
+                    //robot.Intake.intakeSlideIN();
+                    robot.Intake.intakeOUT();
                 }
                 if(gamepad1.dpad_left){
                     robot.Intake.intakeSTOP();
@@ -179,7 +180,28 @@ public class TeleOpV1 extends OpMode {
                 }
                 break;
             case TRANSFER:
-
+//                if(gamepad2.a || outtakeOption.equals("start")) { // this current code would be in transfer state when intake ready
+//                    robot.Outtake.groundPositionOpen();
+//                    outtakeOption = "";
+//                }
+//                else if(gamepad2.left_trigger > 0.2 || gamepad2.right_trigger > 0.2){
+//                    robot.Outtake.groundPositionClose();
+//                }
+//                if(gamepad2.b) {
+//                    outtakeOption = "lowBasket";
+//                    robot.Outtake.closeClaw();
+//                    state = State.OUTTAKE_READY;
+//                }
+//                else if(gamepad2.y) {
+//                    outtakeOption = "highBasket";
+//                    robot.Outtake.closeClaw();
+//                    state = State.OUTTAKE_READY;
+//                }
+//                else if(gamepad2.dpad_down){
+//                    outtakeOption = "wallIntake";
+//                    robot.Outtake.closeClaw();
+//                    state = State.OUTTAKE_READY;
+//                }
                 break;
             case OUTTAKE_READY:
                 robot.Outtake.readyPosition();
@@ -223,13 +245,7 @@ public class TeleOpV1 extends OpMode {
                         robot.Outtake.closeClaw();
                         outtakeOption = "highChamber";
                     }
-//                        if (outtakeOption.equals("highChamber")){
-//                            robot.Outtake.highChamberSet();
-//                            if (gamepad2.left_bumper || gamepad2.right_bumper){
-//                                outtakeOption = "highChamberFinish";
-//                            }
-//                        }
-                    }
+                }
                 if (outtakeOption.equals("highChamber")){
                     robot.Outtake.highChamberSet();
                     if (gamepad2.left_bumper || gamepad2.right_bumper){

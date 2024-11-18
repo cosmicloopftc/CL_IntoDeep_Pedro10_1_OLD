@@ -105,7 +105,7 @@ public class FollowerConstants {
 
     // Mass of robot in kilograms
     //TODO***: change below for our old robot
-    public static double mass = 10.65942;
+    public static double mass = 12.25;
 
     // Centripetal force to power scaling
     //TODO***: change below for our old robot

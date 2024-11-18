@@ -107,7 +107,18 @@ public class HardwareIntake {
     public void intakeSlideOUT() {
         intakeSlideSetPositionPower(1000,0.3); //TODO: set position and power
     }
+    public void intakeSlideMID() {
+        intakeSlideSetPositionPower(500,0.3); //TODO: set position and power
+    }
 
+    public void intakeDOWN(){
+        leftIntakeServo.setPosition(0); //TODO: find correct position
+        rightIntakeServo.setPosition(1); //TODO: find correct position
+    }
+    public void intakeUP(){
+        leftIntakeServo.setPosition(1); //TODO: find correct position (should be the extreme servo position - 0 or 1)
+        rightIntakeServo.setPosition(0); //TODO: find correct position  (should be the extreme servo position - 0 or 1)
+    }
     public void transferIntake(){ //TODO: finish
         intakeSTOP();
         intakeSlideIN();

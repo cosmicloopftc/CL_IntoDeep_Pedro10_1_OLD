@@ -127,13 +127,13 @@ public class HardwareOuttake {
     public void highChamberFinish(){
         leftSlideSetPositionPower(900,0.6);
         rightSlideSetPositionPower(900,0.6);
-        leftOuttakeArm.setPosition(0);
-        rightOuttakeArm.setPosition(1);
+        //leftOuttakeArm.setPosition(0);
+        //rightOuttakeArm.setPosition(1);
     }
     public void wallIntake(){
         leftSlideSetPositionPower(0,0.6);
         rightSlideSetPositionPower(0,0.6);
-        leftOuttakeArm.setPosition(0);
-        rightOuttakeArm.setPosition(1);
+        leftOuttakeArm.setPosition(0.05);
+        rightOuttakeArm.setPosition(0.95);
     }
 }
