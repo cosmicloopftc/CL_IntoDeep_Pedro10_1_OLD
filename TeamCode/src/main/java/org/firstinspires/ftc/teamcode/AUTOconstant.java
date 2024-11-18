@@ -1,0 +1,89 @@
+package org.firstinspires.ftc.teamcode;
+
+/**
+ * Simple static field serving as a storage medium for the bot's pose and other CONSTANT
+ * This allows different classes/opmodes to set and read from a central source of truth.
+ * A static field allows data to persist between opmodes.
+ * **INTO THE DEEP 2024-2025, PedroPathing Coordinate Plane
+ *   (x,y) starts at (0,0) at bottom left on Blue Alliance Observation side
+ *      Pose Angle 0 degree start here--point to right toward Red Net side
+ *    *Pedro uses 0 - 144 for x and y, with 0, 0 being on the bottom left.
+ *     (For Centerstage, this would be blue far side/red human player station.)
+ *     (x,y) in RoadRunner transpose to (y+72,x-72)
+ *
+ *   updated 11/27/2028: start coordinate mapping
+ */
+
+
+public class AUTOconstant {
+//    public static String startingAllianceLocation;
+//    // static Pose2d currentPose = new Pose2d();
+//    public static double autoEndX;
+//    public static double autoEndY;
+//    public static double autoEndHeadingRadian;
+//
+//    public static int autoEnd_Slider_MotorPosition;
+//    public static double autoEnd_Slider_ServoArmPosition;
+//    public static double autoEnd_Slider_ServoWristPosition;
+//    public static double autoEnd_Slider_ServoDropperPosition;
+//
+//    public static double autoEnd_Airplane_ServoPosition;
+//
+//    public static double autoEnd_Intake_ServoPosition;      //drop off Purple pixel to spike mark
+//    public static double autoEnd_Intake_ServoLeftPosition;
+//    public static double autoEnd_Intake_ServoRightPosition;
+//    public static double autoEndheadingIMU_yawDEG;
+
+    public static double AUTOrobotWidth = 18;           //inches
+    public static double AUTOrobotLength = 18;
+    public static double AUTOrobotIntakeLengthFromCenter = 9;
+    public static double AUTOrobotOuttakeLengthToNetFromCenter = 9;
+    public static double AUTOrobotOuttakeLengthToSpecimenFromCenter = 9;
+
+    public static double AUTOstartRedNetX = 144 - AUTOrobotWidth/2;;
+    public static double AUTOstartRedNetY= 24 + AUTOrobotLength/2;
+
+
+    //below is for PedroPathing Coordinate, which is +72 from RoadRunner coordinate
+    //red Net start
+    public static double AUTOredSample1X =-71 + 72;      //-(AUTOblueSample6Y);
+    public static double AUTOredSample1Y =-23.625 + 72;  //-(AUTOblueSample6X);
+    public static double AUTOredSample2X =-59.25 + 72;     //-(AUTOblueSample5Y);
+    public static double AUTOredSample2Y =-23.625 + 72;    //-(AUTOblueSample5X);
+    public static double AUTOredSample3X =-47.5 + 72;    //-(AUTOblueSample4Y);
+    public static double AUTOredSample3Y =-23.625 + 72;  //-(AUTOblueSample4X);
+    public static double AUTORedNetX =-71 + 72;
+    public static double AUTORedNetY =-58 + 72;
+
+    //Red Observation start
+    public static double AUTOredSample4X = 47.5 + 72;    //-(AUTOblueSample1Y);
+    public static double AUTOredSample4Y = -23.625 + 72; //-(AUTOblueSample1X);
+    public static double AUTOredSample5X = 59.25 + 72;     //-(AUTOblueSample2Y);
+    public static double AUTOredSample5Y = -23.625 + 72;   //-(AUTOblueSample2X);
+    public static double AUTOredSample6X = 71 + 72;      //-(AUTOblueSample3Y);
+    public static double AUTOredSample6Y = -23.625 +72;  //-(AUTOblueSample3X);
+
+    // Blue Net start
+    public static double AUTOblueSample1X =71 + 72;
+    public static double AUTOblueSample1Y =23.625 + 72;
+    public static double AUTOblueSample2X =59.25 + 72;
+    public static double AUTOblueSample2Y =23.625 + 72;
+    public static double AUTOblueSample3X =47.5 + 72;
+    public static double AUTOblueSample3Y =23.625 + 72;
+    public static double AUTOblueNetX =71 + 72;
+    public static double AUTOblueNetY =58 + 72;
+
+    //Blue Observation start
+    public static double AUTOblueSample6X =-71 + 72;
+    public static double AUTOblueSample6Y =23.625 + 72;
+    public static double AUTOblueSample5X =-59.25 + 72;
+    public static double AUTOblueSample5Y =23.625 + 72;
+    public static double AUTOblueSample4X =-47.5 + 72;
+    public static double AUTOblueSample4Y =23.625 + 72;
+
+
+
+
+
+
+}

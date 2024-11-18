@@ -149,7 +149,7 @@ public class TestSensorHuskyLens extends LinearOpMode {
              * Returns an empty array if no objects are seen.
              */
             HuskyLens.Block[] blocks = huskyLens.blocks();
-            telemetry.addData("Block count", blocks.length);
+            telemetry.addData("Block  count", blocks.length);
             for (int i = 0; i < blocks.length; i++) {
                 telemetry.addData("Block", blocks[i].toString());
                 telemetry.addData("Width", blocks[i].width);  //   (size of box, in pixels)
