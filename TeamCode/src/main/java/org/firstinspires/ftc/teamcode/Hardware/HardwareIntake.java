@@ -100,14 +100,25 @@ public class HardwareIntake {
 
     //method for the retracted position of the intake slides
     public void intakeSlideIN() {
-        intakeSlideSetPositionPower(0,0.3); //TODO: set power
+        intakeSlideSetPositionPower(0,0.6); //TODO: set power
     }
 
     //method for the extended position of the intake slides
     public void intakeSlideOUT() {
-        intakeSlideSetPositionPower(1000,0.3); //TODO: set position and power
+        intakeSlideSetPositionPower(1700,0.6); //TODO: set position and power
+    }
+    public void intakeSlideMID() {
+        intakeSlideSetPositionPower(850,0.6); //TODO: set position and power
     }
 
+    public void intakeDOWN(){
+        leftIntakeServo.setPosition(0.81); //TODO: find correct position
+        //rightIntakeServo.setPosition(0.81); //This is the actual left servo on the robot
+    }
+    public void intakeUP(){
+        leftIntakeServo.setPosition(1); //TODO: find correct position (should be the extreme servo position - 0 or 1)
+        //rightIntakeServo.setPosition(1); //This is the actual left servo on the robot
+    }
     public void transferIntake(){ //TODO: finish
         intakeSTOP();
         intakeSlideIN();
