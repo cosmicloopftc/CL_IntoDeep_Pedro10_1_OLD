@@ -109,6 +109,7 @@ public class TeleOpV1 extends OpMode {
 //        telemetry.update();
 
         robot.AdafruitLED.LEDinitReady();
+
     }
 
     @Override
@@ -135,12 +136,12 @@ public class TeleOpV1 extends OpMode {
         switch (state) {
             case START:
                 if(gamepad1.dpad_up){
-                    robot.Intake.intakeSlideOUT();
-                    //robot.Intake.intakeIN();
+                    //robot.Intake.intakeSlideOUT();
+                    robot.Intake.intakeIN();
                 }
                 if(gamepad1.dpad_down){
-                    robot.Intake.intakeSlideIN();
-                    //robot.Intake.intakeOUT();
+                    //robot.Intake.intakeSlideIN();
+                    robot.Intake.intakeOUT();
                 }
                 if(gamepad1.dpad_left){
                     robot.Intake.intakeSTOP();
