@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 //modified from FTC Thunderbolts (Sacramento, CA) mentor's program structure
 
 public class HardwareOuttake {
-//    private DcMotor Intake_Motor = null;
+    //    private DcMotor Intake_Motor = null;
     public DcMotor outtakeLeftSlide = null;
     public DcMotor outtakeRightSlide = null;
 
@@ -72,14 +72,14 @@ public class HardwareOuttake {
 
 
     public void openClaw(){
-        claw.setPosition(0.2);
+        claw.setPosition(0.17);
     }
     public void closeClaw(){
-        claw.setPosition(0);
+        claw.setPosition(0.32);
     }
     public void groundPositionOpen(){
-        leftSlideSetPositionPower(0,0.6);
-        rightSlideSetPositionPower(0,0.6);
+        leftSlideSetPositionPower(0,1);
+        rightSlideSetPositionPower(0,1);
         leftOuttakeArm.setPosition(0.98);
         rightOuttakeArm.setPosition(0.02);
         openClaw();
@@ -95,8 +95,8 @@ public class HardwareOuttake {
     public void readyPosition(){
         leftOuttakeArm.setPosition(0.98);
         rightOuttakeArm.setPosition(0.02);
-        leftSlideSetPositionPower(500,0.6);
-        rightSlideSetPositionPower(500,0.6);
+        leftSlideSetPositionPower(500,1);
+        rightSlideSetPositionPower(500,1);
     }
 
     public void lowBasket(){
@@ -106,10 +106,10 @@ public class HardwareOuttake {
         rightSlideSetPositionPower(970,0.6);
     }
     public void highBasket(){
-        leftOuttakeArm.setPosition(0.2);
-        rightOuttakeArm.setPosition(0.8);
-        leftSlideSetPositionPower(3000,0.6);
-        rightSlideSetPositionPower(3000,0.6);
+        leftOuttakeArm.setPosition(0.22);
+        rightOuttakeArm.setPosition(0.78);
+        leftSlideSetPositionPower(3400,1);
+        rightSlideSetPositionPower(3400,1);
     }
     public void lowChamber(){ //Not able to do this with current V1 robot
 //        leftSlideSetPositionPower(0,0);
@@ -119,21 +119,22 @@ public class HardwareOuttake {
 //        claw.setPosition(0);
     }
     public void highChamberSet(){
-        leftSlideSetPositionPower(1100,0.6);
-        rightSlideSetPositionPower(1100,0.6);
-        leftOuttakeArm.setPosition(0.1);
-        rightOuttakeArm.setPosition(0.9);
+        leftSlideSetPositionPower(700,0.6);
+        rightSlideSetPositionPower(700,0.6);
+        leftOuttakeArm.setPosition(0.3);
+        rightOuttakeArm.setPosition(0.7);
     }
     public void highChamberFinish(){
-        leftSlideSetPositionPower(900,0.6);
-        rightSlideSetPositionPower(900,0.6);
-        leftOuttakeArm.setPosition(0);
-        rightOuttakeArm.setPosition(1);
+        leftSlideSetPositionPower(700,1);
+        rightSlideSetPositionPower(700,1);
+        leftOuttakeArm.setPosition(0.3);
+        rightOuttakeArm.setPosition(0.7);
+        openClaw();
     }
     public void wallIntake(){
-        leftSlideSetPositionPower(0,0.6);
-        rightSlideSetPositionPower(0,0.6);
-        leftOuttakeArm.setPosition(0);
-        rightOuttakeArm.setPosition(1);
+        leftSlideSetPositionPower(0,1);
+        rightSlideSetPositionPower(0,1);
+        leftOuttakeArm.setPosition(0.05);
+        rightOuttakeArm.setPosition(0.95);
     }
 }
