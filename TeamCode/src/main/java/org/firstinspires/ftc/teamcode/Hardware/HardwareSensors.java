@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 //modified from FTC Thunderbolts (Sacramento, CA) mentor's program structure
 
 public class HardwareSensors {
 //    private DcMotor Intake_Motor = null;
+public DistanceSensor SensorDistance;
+    public ColorSensor SensorColor;
 
     /*Constructor*/
     public HardwareSensors() {
@@ -14,8 +18,16 @@ public class HardwareSensors {
 
     /* Initialize standard Hardware interface */
     public void init(HardwareMap hardwareMap)    {
-        //Save reference to Hardware map
 
+
+
+        SensorDistance = hardwareMap.get(DistanceSensor.class,"SensorDistance");
+//        SensorColor = hardwareMap.get(ColorSensor.class, "SensorColor");
+
+
+
+        //Save reference to Hardware map
+//
 //example:  map and setup mode of Intake motor
 //        Intake_Motor = hardwareMap.get(DcMotor.class, "Intake_Motor");
 //        Intake_Motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

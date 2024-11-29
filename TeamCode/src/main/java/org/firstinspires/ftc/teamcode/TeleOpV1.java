@@ -5,11 +5,12 @@ import android.graphics.Color;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -18,7 +19,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.w8wjb.ftc.AdafruitNeoDriver;
 
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Hardware.HardwareLED;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
@@ -52,6 +56,7 @@ public class TeleOpV1 extends OpMode {
     private DashboardPoseTracker dashboardPoseTracker;
     private Telemetry telemetry;
 
+
     public AdafruitNeoDriver neopixels;
     HardwareRobot robot = new HardwareRobot();
 
@@ -68,7 +73,7 @@ public class TeleOpV1 extends OpMode {
     double lastTime;
     double imuAngle;
 
-//    public AdafruitNeoDriver neopixels;
+
 
 
 
@@ -76,35 +81,37 @@ public class TeleOpV1 extends OpMode {
     @Override
     public void init() {
 
+        robot.init(hardwareMap);
 
+/*        neopixels = hardwareMap.get(AdafruitNeoDriver.class, "neopixels");
+        neopixels.setNumberOfPixels(NUM_PIXELS);
+        poseUpdater = new PoseUpdater(hardwareMap);
+        dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
+        follower = new Follower(hardwareMap);
 
-//        neopixels = hardwareMap.get(AdafruitNeoDriver.class, "neopixels");
-//        neopixels.setNumberOfPixels(NUM_PIXELS);
-       // poseUpdater = new PoseUpdater(hardwareMap);
-       // dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
-        //follower = new Follower(hardwareMap);
+           note hardwareMap is default and part of FTC Robot Controller HardwareMap class
+        robot.imu.resetYaw();      //reset the IMU/Gyro angle with each match.
+        runtime.reset();
 
-        robot.init(hardwareMap);   //note hardwareMap is default and part of FTC Robot Controller HardwareMap class
-//        robot.imu.resetYaw();      //reset the IMU/Gyro angle with each match.
-//        runtime.reset();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-      //  telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        Important Step 2: Get access to a list of Expansion Hub Modules to enable changing caching methods.
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
 
-        //Important Step 2: Get access to a list of Expansion Hub Modules to enable changing caching methods.
-        //List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-    //    List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-//        for (LynxModule hub : allHubs) {
-//            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-//        }
+        follower.startTeleopDrive();
 
-   //     follower.startTeleopDrive();
-     //   telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-    //    Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
-   //     Drawing.sendPacket();
+        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
+        Drawing.sendPacket();
 
-//        telemetry.addData(">", "Hardware Initialized");
-//        telemetry.update();
-
+        telemetry.addData(">", "Hardware Initialized");
+        telemetry.update();
+*/
+//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+//        telemetry.addLine("Hello");
     }
 
     @Override
@@ -115,9 +122,8 @@ public class TeleOpV1 extends OpMode {
 
 
 
+//        robot.sensor.SensorColor = hardwareMap.get(ColorSensor.class, "SensorColor");
 
-
-        robot.AdafruitLED.LEDinitReady();
 
 //        robot.AdafruitLED.LEDleft2Green.setState(true);
 //        robot.AdafruitLED.LEDleft2Red.setState(false);
@@ -142,9 +148,8 @@ public class TeleOpV1 extends OpMode {
 
     @Override
     public void loop() {
+        ColorSampleDetecter();
 
-
-        robot.AdafruitLED.LEDinitError();
 /*
         neopixels.fill(Color.rgb(0, 255, 0));
         neopixels.show();
@@ -195,6 +200,29 @@ public class TeleOpV1 extends OpMode {
 
     }
 
+//    public void DistanceSampleDetecter(double cutoff) {
+//
+//        double distance = robot.sensor.SensorDistance.getDistance(DistanceUnit.CM);
+//        if (distance < cutoff) {
+//            robot.AdafruitLED.LEDinitReady();
+//        } else {
+//            robot.AdafruitLED.LEDinitError();
+//        }
+//    }
+
+    public void ColorSampleDetecter() {
+        // detecting the red, blue, yellow samples
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+
+
+        int red = robot.sensor.SensorColor.red();
+        telemetry.addData("red: ", red);
+        int green = robot.sensor.SensorColor.green();
+        telemetry.addData("green: ", green);
+        int blue = robot.sensor.SensorColor.blue();
+        telemetry.addData("blue: ", blue);
+}
 
 
 }

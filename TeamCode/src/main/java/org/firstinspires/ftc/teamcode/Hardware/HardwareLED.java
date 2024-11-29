@@ -27,20 +27,8 @@ public class HardwareLED {
 
     }
     public void init(HardwareMap hardwareMap) {
-
-        LEDleftGreen = hardwareMap.get(DigitalChannel.class, "leftgreen");               //connect to Digital port 2
-        LEDleftRed = hardwareMap.get(DigitalChannel.class, "leftred");                   //connect to Digital port 3
-
-        LEDleft2Green = hardwareMap.get(DigitalChannel.class, "left2green");               //connect to Digital port 6
-        LEDleft2Red = hardwareMap.get(DigitalChannel.class, "left2red");                   //connect to Digital port 7
-
-        LEDrightRed = hardwareMap.get(DigitalChannel.class, "rightgreen");             //connect to Digital port 2
-        LEDrightGreen = hardwareMap.get(DigitalChannel.class, "rightred");             //connect to Digital port 3
-
-        LEDright2Green = hardwareMap.get(DigitalChannel.class, "right2green");             //connect to Digital port 4
-        LEDright2Red = hardwareMap.get(DigitalChannel.class, "right2red");                 //connect to Digital port 5
-
-//        colorSensor = hardwareMap.get(ColorSensor.class,"colorSensor");
+            int NUM_PIXELS = 30;
+        colorSensor = hardwareMap.get(ColorSensor.class,"colorSensor");
 
 
 //        neopixels = hardwareMap.get(AdafruitNeoDriver.class,"neopixels");
@@ -53,59 +41,16 @@ public class HardwareLED {
 
     }
     public void LEDinitReady() {
-        LEDrightGreen.setMode(DigitalChannel.Mode.OUTPUT);
-        LEDrightRed.setMode(DigitalChannel.Mode.INPUT);
-        LEDrightGreen.setState(true);
-        LEDrightRed.setState(false);
-
-        LEDright2Green.setMode(DigitalChannel.Mode.OUTPUT);
-        LEDright2Red.setMode(DigitalChannel.Mode.OUTPUT);
-        LEDright2Green.setState(true);
-        LEDright2Red.setState(false);
-
-        LEDleft2Green.setMode(DigitalChannel.Mode.OUTPUT);
-        LEDleft2Red.setMode(DigitalChannel.Mode.OUTPUT);
-        LEDleft2Green.setState(true);
-        LEDleft2Red.setState(false);
-
-        LEDleftGreen.setMode(DigitalChannel.Mode.OUTPUT);
-        LEDleftGreen.setState(true);
-        LEDleftRed.setState(false);
-
-
-//      LEDleftGreen.setMode(DigitalChannel.Mode.INPUT);
-//        LEDleftRed.setMode(DigitalChannel.Mode.INPUT);
-//        LEDleftGreen.setState(false);
-//        LEDleftRed.setState(false);
+//        neopixels.fill(Color.rgb(0, 255, 0));
+//        neopixels.show();
 
 
     }
     public void LEDinitError() {
-        LEDrightGreen.setMode(DigitalChannel.Mode.INPUT);
-        LEDrightRed.setMode(DigitalChannel.Mode.OUTPUT);
-        LEDrightGreen.setState(false);
-        LEDrightRed.setState(true);
+        neopixels.fill(Color.rgb(255, 0, 0));
+        neopixels.show();
 
-        LEDright2Green.setMode(DigitalChannel.Mode.OUTPUT);
-        LEDright2Red.setMode(DigitalChannel.Mode.OUTPUT);
-        LEDright2Green.setState(false);
-        LEDright2Red.setState(true);
-
-//        LEDleft2Green.setMode(DigitalChannel.Mode.INPUT);
-//        LEDleft2Red.setMode(DigitalChannel.Mode.INPUT);
-//        LEDleft2Green.setState(false);
-//        LEDleft2Red.setState(false);
-
-       LEDleft2Green.setMode(DigitalChannel.Mode.INPUT);
-        LEDleft2Red.setMode(DigitalChannel.Mode.OUTPUT);
-        LEDleft2Green.setState(false);
-        LEDleft2Red.setState(true);
-
-
-
-        LEDleftGreen.setMode(DigitalChannel.Mode.OUTPUT);
-        LEDleftRed.setMode(DigitalChannel.Mode.OUTPUT);
-        LEDleftGreen.setState(false);
-        LEDleftRed.setState(true);
     }
 }
+
+// purple: (255, 0, 255), white: (255, 255, 255), yellow: (255, 222, 33),

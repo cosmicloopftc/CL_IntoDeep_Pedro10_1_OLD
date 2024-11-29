@@ -46,9 +46,9 @@ public class HardwareRobot {
     public HardwareIntake intake = null;
     public HardwareOuttake outtake = null;
     public HardwareHang hang = null;
-    public HardwareSensors sensor = null;
+    public HardwareSensors sensor = new HardwareSensors();
     public HardwareGamePadLED gamePadLED = null;
-    public HardwareLED AdafruitLED = new HardwareLED();
+    public HardwareLED AdafruitLED = null;
 
 
     //**ADD on subsequent connected device.
