@@ -35,17 +35,16 @@ public class AUTOconstant {
 //    public static double autoEnd_Intake_ServoRightPosition;
 //    public static double autoEndheadingIMU_yawDEG;
 
-    public static double AUTOrobotWidth = 18;           //inches
-    public static double AUTOrobotLength = 18;
-    public static double AUTOrobotIntakeLengthFromCenter = 9;
-    public static double AUTOrobotOuttakeLengthToNetFromCenter = 9;
-    public static double AUTOrobotOuttakeLengthToSpecimenFromCenter = 9;
+    public static double AUTOrobotWidth = 18;           //effective inches
+    public static double AUTOrobotLength = 18;          //effective inches
+    public static double AUTObackOuttakeDropOffLength = 9;
+    public static double AUTOfrontIntakePickupLength = 9;        //distance of outtake from center when picking speciman;
 
     public static double AUTOstartRedNetX = 144 - AUTOrobotLength/2;;
     public static double AUTOstartRedNetY= 24 - AUTOrobotWidth/2;    //start = right side panel is at mat line
 
     //below is for PedroPathing Coordinate of center of Sample
-    //red Net start     //TODO--to check
+    //red Basket start     //TODO--Need to confirm coordinates
     public static double AUTOredSample1X = 98.25;             //-71 + 72;      //-(AUTOblueSample6Y);
     public static double AUTOredSample1Y =  2.75;            //-23.625 + 72;  //-(AUTOblueSample6X);
     public static double AUTOredSample2X = 98.25;              //-59.25 + 72;     //-(AUTOblueSample5Y);

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTORedNetX;
 import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTORedNetY;
+import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOfrontIntakePickupLength;
 import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOredSample1X;
 import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOredSample1Y;
 import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOredSample2X;
@@ -12,9 +13,7 @@ import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOstartRedNetX;
 import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOstartRedNetY;
 
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -24,7 +23,6 @@ import org.firstinspires.ftc.teamcode.Hardware.HardwareRobot;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.PoseUpdater;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
@@ -53,84 +51,152 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
  *
  * 11/29/2024: start, ChainPath--start to Sample 3 and then to Net
  *             include FTC Dashboard
+ * 12/2/2024 OT:  modify from PedroPathing.com auto example
+ *
+ *
  */
 
 
 @Config
-@Autonomous(name = "Auto Red Net v1.0", group = "Auto")
-public class AutoRedNet1 extends OpMode {
+@Autonomous(name = "Auto Red Basket v1.0", group = "Auto")
+public class AutoRedBasket1 extends OpMode {
     private Telemetry telemetryA;
-    private Follower follower;
-    private PoseUpdater poseUpdater;
-    private DashboardPoseTracker dashboardPoseTracker;
     //private Telemetry telemetry;
 
-    private Timer pathTimer, actionTimer, opmodeTimer;
-    //    private int pathState, actionState, clawState;
+    private PoseUpdater poseUpdater;
+    private DashboardPoseTracker dashboardPoseTracker;
+
     private String navigation;
     //    public ClawSubsystem claw;
     private HuskyLens huskyLens;
 
 
-    private Pose sample1Pose, sample2Pose, sample3Pose, sample4Pose, sample5Pose, sample6Pose, redNet, blueNet;
-    private PathChain startSample3Net;
-    private PathChain netSample2Net;
-    private PathChain netSample1Net;
+    private Follower follower;
+    private Timer pathTimer, actionTimer, opmodeTimer;
+    private int pathState;
+    // private Pose sample1Pose, sample2Pose, sample3Pose, sample4Pose, sample5Pose, sample6Pose, redNet, blueNet;
+    private Path preLoadScore;
+    private PathChain pickupSample3, pickupSample2, pickupSample1;
+    private PathChain scoreSample3, scoreSample2, scoreSample1;
 
-    private Pose startPose = new Pose(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(180));
 
-    HardwareRobot robot = new HardwareRobot();
+
+    HardwareRobot robot = new HardwareRobot();          //TODO: will this interfere with follower(hardwareMap)? in .init
+
+    private Pose startPose = new Pose(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(90));
+    private Pose pickup1Pose = new Pose(AUTOredSample1X + AUTOfrontIntakePickupLength, AUTOredSample1Y, Math.toRadians(180));
+    private Pose pickup2Pose = new Pose(AUTOredSample2X + AUTOfrontIntakePickupLength, AUTOredSample2Y, Math.toRadians(180));
+    private Pose pickup3Pose = new Pose(AUTOredSample3X + AUTOfrontIntakePickupLength, AUTOredSample3Y, Math.toRadians(180));
+    private Pose redScorePose = new Pose(AUTORedNetX, AUTORedNetY, Math.toRadians(135));
+
+
 
     public void buildPaths() {
-        Pose sample1Pose = new Pose(AUTOredSample1X, AUTOredSample1Y, Math.toRadians(180));
-        Pose sample2Pose = new Pose(AUTOredSample2X, AUTOredSample2Y, Math.toRadians(180));
-        Pose sample3Pose = new Pose(AUTOredSample3X, AUTOredSample3Y, Math.toRadians(180));
-        Pose redNetPose = new Pose(AUTORedNetX, AUTORedNetY, Math.toRadians(315));
+        preLoadScore = new Path(new BezierLine(new Point(startPose), new Point(redScorePose)));
+        preLoadScore.setLinearHeadingInterpolation(startPose.getHeading(), redScorePose.getHeading());
 
-        startSample3Net = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(startPose), new Point(sample3Pose.getX()+5+9, sample3Pose.getY(), Point.CARTESIAN), new Point(sample3Pose.getX()+9, sample3Pose.getY(), Point.CARTESIAN)))
-                .setConstantHeadingInterpolation(sample3Pose.getHeading())              //one Heading only
-                .addPath(new BezierLine(new Point(sample3Pose.getX() + 9, sample3Pose.getY(), Point.CARTESIAN), new Point(redNetPose.getX() - 9, redNetPose.getY() + 9, Point.CARTESIAN)))
-                .setLinearHeadingInterpolation(sample3Pose.getHeading(), redNetPose.getHeading())       //startHeading and endHeading
-                .setPathEndTimeoutConstraint(3)
+        pickupSample3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(redScorePose), new Point(pickup3Pose)))
+                .setLinearHeadingInterpolation(redScorePose.getHeading(), pickup3Pose.getHeading())            //one Heading only
                 .build();
 
+        scoreSample3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(pickup3Pose), new Point(redScorePose)))
+                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), redScorePose.getHeading())            //one Heading only
+                .build();
     }
 
 
 
+
+
+
+    public void autonomousPathUpdate() {
+        switch (pathState) {
+            case 0:     //goto basket and score
+                follower.followPath(preLoadScore);
+                setPathState(1);
+                break;
+            case 1:     //goto specimen 3 and pick it up
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if (follower.getPose().getX() > (redScorePose.getX() - 9) && follower.getPose().getY() > (redScorePose.getY() - 9)) {
+                    /* Score Preload */
+                    //TODO: raise Outtake and then open claw?
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                    //then go to next path--go to Specimen 3 pickup position
+                    follower.followPath(pickupSample3,true);
+                    setPathState(2);
+                }
+                break;
+            case 2:     //goto basket and score
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
+                if (follower.getPose().getX() > (pickup1Pose.getX() - 1) && follower.getPose().getY() > (pickup1Pose.getY() - 1)) {
+                    /* Grab Sample */
+                    //TODO: do something
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                    follower.followPath(scoreSample3, /* holdEnd = */ true);
+                    setPathState(3);
+                }
+                break;
+        }
+    }
+
+
+    /** These change the states of the paths and actions
+     * It will also reset the timers of the individual switches **/
+    public void setPathState(int pState) {
+        pathState = pState;
+        pathTimer.resetTimer();
+    }
+
+//**********************************************************************************
     @Override
     public void init() {
+        pathTimer = new Timer();
+        opmodeTimer = new Timer();
+        opmodeTimer.resetTimer();
 
         poseUpdater = new PoseUpdater(hardwareMap);
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
-        follower = new Follower(hardwareMap);
 
-        robot.init(hardwareMap);   //note hardwareMap is default and part of FTC Robot Controller HardwareMap class
+        follower = new Follower(hardwareMap);
+        follower.setStartingPose(startPose);
+
+        robot.init(hardwareMap);   //TODO: check if conflicts with Follower(hardwareMap);note hardwareMap is default and part of FTC Robot Controller HardwareMap class
 
         buildPaths();
 
 
 
-        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetryA.update();
+        //telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+        //telemetryA.update();
 
     }
+
+    @Override
+    public void init_loop() {}
 
     public void start() {
         opmodeTimer.resetTimer();
+        setPathState(0);
     }
 
-
+//**********************************************************************************
     @Override
     public void loop() {
         follower.update();
+        autonomousPathUpdate();
+
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.update();
+
 
        // telemetryA.addLine("going forward");
-
-
-        follower.telemetryDebug(telemetryA);
-        telemetryA.update();
+//        follower.telemetryDebug(telemetryA);
+//        telemetryA.update();
     }
 
 
@@ -158,9 +224,6 @@ public class AutoRedNet1 extends OpMode {
  */
 
 
-//        startSample1 = new Path(new BezierLine(new Point(144,24, Point.CARTESIAN), new Point(120,24, Point.CARTESIAN)));
-//        startSample1.setConstantHeadingInterpolation(0);
-//        follower.followPath(startSample1);
 
 
 //    public void buildPaths() {

@@ -17,7 +17,9 @@ dependencies {
     implementation 'org.firstinspires.ftc:Vision:10.1.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
-    implementation 'com.acmerobotics.dashboard:dashboard:0.4.5'
+//    implementation 'com.acmerobotics.dashboard:dashboard:0.4.5'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'            //update 12/2/2024
+
 
     implementation 'org.firstinspires.ftc:Inspection:9.0.0'
     implementation 'org.firstinspires.ftc:Blocks:9.0.0'
