@@ -83,27 +83,26 @@ public class AutoRedBasket1 extends OpMode {
 
     HardwareRobot robot = new HardwareRobot();          //TODO: will this interfere with follower(hardwareMap)? in .init
 
-    private Pose startPose = new Pose(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(90));
+    private Pose startPose = new Pose(134, 39.75, Math.toRadians(90));  //(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(90));
     private Pose pickup1Pose = new Pose(AUTOredSample1X + AUTOfrontIntakePickupLength, AUTOredSample1Y, Math.toRadians(180));
     private Pose pickup2Pose = new Pose(AUTOredSample2X + AUTOfrontIntakePickupLength, AUTOredSample2Y, Math.toRadians(180));
     private Pose pickup3Pose = new Pose(AUTOredSample3X + AUTOfrontIntakePickupLength, AUTOredSample3Y, Math.toRadians(180));
-    private Pose redScorePose = new Pose(AUTORedNetX, AUTORedNetY, Math.toRadians(135));
-
+    private Pose redScorePose = new Pose(124, 14, Math.toRadians(135));      //(AUTORedNetX, AUTORedNetY, Math.toRadians(135));;
 
 
     public void buildPaths() {
         preLoadScore = new Path(new BezierLine(new Point(startPose), new Point(redScorePose)));
         preLoadScore.setLinearHeadingInterpolation(startPose.getHeading(), redScorePose.getHeading());
 
-        pickupSample3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(redScorePose), new Point(pickup3Pose)))
-                .setLinearHeadingInterpolation(redScorePose.getHeading(), pickup3Pose.getHeading())            //one Heading only
-                .build();
-
-        scoreSample3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pickup3Pose), new Point(redScorePose)))
-                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), redScorePose.getHeading())            //one Heading only
-                .build();
+//        pickupSample3 = follower.pathBuilder()
+//                .addPath(new BezierLine(new Point(redScorePose), new Point(pickup3Pose)))
+//                .setLinearHeadingInterpolation(redScorePose.getHeading(), pickup3Pose.getHeading())            //one Heading only
+//                .build();
+//
+//        scoreSample3 = follower.pathBuilder()
+//                .addPath(new BezierLine(new Point(pickup3Pose), new Point(redScorePose)))
+//                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), redScorePose.getHeading())            //one Heading only
+//                .build();
     }
 
 
@@ -115,29 +114,39 @@ public class AutoRedBasket1 extends OpMode {
         switch (pathState) {
             case 0:     //goto basket and score
                 follower.followPath(preLoadScore);
+
+
+                robot.Outtake.leftSlideSetPositionPower(3400,1); // Slides go up
+                robot.Outtake.rightSlideSetPositionPower(3400,1);
+                if (robot.Outtake.outtakeLeftSlide.getCurrentPosition()>1500){ // If at a certain position, start moving arm
+                    robot.Outtake.highBasket();
+                }
+
+
+                robot.Outtake.openClaw(); // Open the claw when the robot reaches the basket position
                 setPathState(1);
                 break;
-            case 1:     //goto specimen 3 and pick it up
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (follower.getPose().getX() > (redScorePose.getX() - 9) && follower.getPose().getY() > (redScorePose.getY() - 9)) {
-                    /* Score Preload */
-                    //TODO: raise Outtake and then open claw?
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    //then go to next path--go to Specimen 3 pickup position
-                    follower.followPath(pickupSample3,true);
-                    setPathState(2);
-                }
-                break;
-            case 2:     //goto basket and score
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
-                if (follower.getPose().getX() > (pickup1Pose.getX() - 1) && follower.getPose().getY() > (pickup1Pose.getY() - 1)) {
-                    /* Grab Sample */
-                    //TODO: do something
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(scoreSample3, /* holdEnd = */ true);
-                    setPathState(3);
-                }
-                break;
+//            case 1:     //goto specimen 3 and pick it up
+//                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+//                if (follower.getPose().getX() > (redScorePose.getX() - 9) && follower.getPose().getY() > (redScorePose.getY() - 9)) {
+//                    /* Score Preload */
+//                    //TODO: raise Outtake and then open claw?
+//                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+//                    //then go to next path--go to Specimen 3 pickup position
+//                    follower.followPath(pickupSample3,true);
+//                    setPathState(2);
+//                }
+//                break;
+//            case 2:     //goto basket and score
+//                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
+//                if (follower.getPose().getX() > (pickup1Pose.getX() - 1) && follower.getPose().getY() > (pickup1Pose.getY() - 1)) {
+//                    /* Grab Sample */
+//                    //TODO: do something
+//                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+//                    follower.followPath(scoreSample3, /* holdEnd = */ true);
+//                    setPathState(3);
+//                }
+//                break;
         }
     }
 
@@ -165,7 +174,7 @@ public class AutoRedBasket1 extends OpMode {
         robot.init(hardwareMap);   //TODO: check if conflicts with Follower(hardwareMap);note hardwareMap is default and part of FTC Robot Controller HardwareMap class
 
         buildPaths();
-
+        robot.Outtake.groundPositionClose(); // Make sure the robot claw is closed, slides are down, and arm in correct position
 
 
         //telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());

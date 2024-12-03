@@ -33,8 +33,8 @@ public class FollowerConstants {
     //TODO***: change below for our old robot
     //private static double xMovement = 81.34056;
     //private static double yMovement = 65.43028;
-    private static double xMovement = 57.29327;  // old robot: 56.30806
-    private static double yMovement = 43.7724;  // old robot: 39.49151
+    private static double xMovement = 55.8;  // old robot: 56.30806
+    private static double yMovement = 45.5;  // old robot: 39.49151
 
     private static double[] convertToPolar = Point.cartesianToPolar(xMovement, -yMovement);
     public static Vector frontLeftVector = MathFunctions.normalizeVector(new Vector(convertToPolar[0],convertToPolar[1]));
@@ -49,7 +49,7 @@ public class FollowerConstants {
 //            0);
 
     public static CustomPIDFCoefficients translationalPIDFCoefficients = new CustomPIDFCoefficients(
-            0.1,
+            0.2,
             0,
             0.01,
             0);
@@ -87,10 +87,18 @@ public class FollowerConstants {
 
 
     // Drive PIDF coefficients
+//    public static CustomFilteredPIDFCoefficients drivePIDFCoefficients = new CustomFilteredPIDFCoefficients(
+//            0.025,
+//            0,
+//            0.00001,
+//            0.6,
+//            0);
+
+
     public static CustomFilteredPIDFCoefficients drivePIDFCoefficients = new CustomFilteredPIDFCoefficients(
-            0.025,
+            0.01,
             0,
-            0.00001,
+            0.000001,
             0.6,
             0);
 
@@ -99,7 +107,7 @@ public class FollowerConstants {
 
     // Kalman filter parameters for the drive error Kalman filter
     public static KalmanFilterParameters driveKalmanFilterParameters = new KalmanFilterParameters(
-            6,
+            4,
             1);
 
 
@@ -116,14 +124,14 @@ public class FollowerConstants {
     // if not negative, then the robot thinks that its going to go faster under 0 power
     //TODO***: change below for our old robot
     //public static double forwardZeroPowerAcceleration = -34.62719;
-    public static double forwardZeroPowerAcceleration = -36.27323;   // old robot: -49.26724
+    public static double forwardZeroPowerAcceleration = -40;   // old robot: -49.26724
 
 
     // Acceleration of the drivetrain when power is cut in inches/second^2 (should be negative)
     // if not negative, then the robot thinks that its going to go faster under 0 power
     //TODO***: change below for our old robot
     //public static double lateralZeroPowerAcceleration = -78.15554;
-    public static double lateralZeroPowerAcceleration = -79.72813;  // -77.175   -84.1407  -77.8687
+    public static double lateralZeroPowerAcceleration = -92;  // -77.175   -84.1407  -77.8687
 
 
     // A multiplier for the zero power acceleration to change the speed the robot decelerates at
@@ -133,7 +141,7 @@ public class FollowerConstants {
     // Decreasing this will cause the deceleration at the end of the Path to be slower, making the
     // robot slower but reducing risk of end-of-path overshoots or localization slippage.
     // This can be set individually for each Path, but this is the default.
-    public static double zeroPowerAccelerationMultiplier = 4;
+    public static double zeroPowerAccelerationMultiplier = 4.5;
 
 
     // When the robot is at the end of its current Path or PathChain and the velocity goes below
@@ -183,9 +191,9 @@ public class FollowerConstants {
 
     // These activate / deactivate the secondary PIDs. These take over at errors under a set limit for
     // the translational, heading, and drive PIDs.
-    public static boolean useSecondaryTranslationalPID = false;
-    public static boolean useSecondaryHeadingPID = false;
-    public static boolean useSecondaryDrivePID = false;
+    public static boolean useSecondaryTranslationalPID = true;
+    public static boolean useSecondaryHeadingPID = true;
+    public static boolean useSecondaryDrivePID = true;
 
 
     // the limit at which the translational PIDF switches between the main and secondary translational PIDFs,
@@ -223,7 +231,7 @@ public class FollowerConstants {
 
     // Secondary heading error PIDF coefficients
     public static CustomPIDFCoefficients secondaryHeadingPIDFCoefficients = new CustomPIDFCoefficients(
-            4,
+            3,
             0,
             0.01,
             0);
@@ -238,7 +246,7 @@ public class FollowerConstants {
     // Secondary drive PIDF coefficients
     //TODO***: change below for our old robot
     public static CustomFilteredPIDFCoefficients secondaryDrivePIDFCoefficients = new CustomFilteredPIDFCoefficients(
-            0.02,
+            0.009,
             0,
             0.000005,
             0.6,
