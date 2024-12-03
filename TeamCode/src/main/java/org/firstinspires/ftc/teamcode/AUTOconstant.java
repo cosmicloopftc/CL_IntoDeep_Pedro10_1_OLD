@@ -35,8 +35,8 @@ public class AUTOconstant {
 //    public static double autoEnd_Intake_ServoRightPosition;
 //    public static double autoEndheadingIMU_yawDEG;
 
-    public static double AUTOrobotWidth = 18;           //effective inches
-    public static double AUTOrobotLength = 18;          //effective inches
+    public static double AUTOrobotWidth = 14;    //TODO: might be 16 in       //effective inches
+    public static double AUTOrobotLength = 13;         //effective inches
     public static double AUTObackOuttakeDropOffLength = 9;
     public static double AUTOfrontIntakePickupLength = 9;        //distance of outtake from center when picking speciman;
 
@@ -51,8 +51,8 @@ public class AUTOconstant {
     public static double AUTOredSample2Y = 12.75;           //-23.625 + 72;    //-(AUTOblueSample5X);
     public static double AUTOredSample3X = 98.25;               //-47.5 + 72;    //-(AUTOblueSample4Y);
     public static double AUTOredSample3Y = 22.75;            //-23.625 + 72;  //-(AUTOblueSample4X);
-    public static double AUTORedNetX = 139.00;                         //-71 + 72;
-    public static double AUTORedNetY =   5.00;                       //-58 + 72;
+    public static double AUTORedNetX = 130.00;           // previsouly: 139              //-71 + 72;
+    public static double AUTORedNetY =   14;        //previously: 5               //-58 + 72;
 
     //Red Observation start //TODO
     public static double AUTOredSample4X = 47.5 + 72;    //-(AUTOblueSample1Y);
