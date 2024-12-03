@@ -109,10 +109,10 @@ public class LocalizationTest extends OpMode {
         rightFront.setPower(rightFrontPower);
         rightRear.setPower(rightRearPower);
 
-        telemetryA.addData("x", poseUpdater.getPose().getX());
-        telemetryA.addData("y", poseUpdater.getPose().getY());
-        telemetryA.addData("heading", poseUpdater.getPose().getHeading());
-        telemetryA.addData("total heading", poseUpdater.getTotalHeading());
+        telemetryA.addData("x inch ", poseUpdater.getPose().getX());
+        telemetryA.addData("y inch ", poseUpdater.getPose().getY());
+        telemetryA.addData("heading deg ", Math.toDegrees(poseUpdater.getPose().getHeading()));
+        telemetryA.addData("total heading deg ", Math.toDegrees(poseUpdater.getTotalHeading()));
         telemetryA.update();
 
         Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
