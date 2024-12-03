@@ -75,7 +75,7 @@ public class HardwareOuttake {
         claw.setPosition(0.17);
     }
     public void closeClaw(){
-        claw.setPosition(0.32);
+        claw.setPosition(0.33);
     }
     public void groundPositionOpen(){
         leftSlideSetPositionPower(0,1);
