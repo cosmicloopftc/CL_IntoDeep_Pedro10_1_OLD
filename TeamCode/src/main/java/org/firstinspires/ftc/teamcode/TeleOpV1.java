@@ -93,7 +93,7 @@ public class TeleOpV1 extends OpMode {
         battery = hardwareMap.voltageSensor.get("Control Hub");
 
 
-        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+//        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         //Important Step 2: Get access to a list of Expansion Hub Modules to enable changing caching methods.
@@ -104,8 +104,8 @@ public class TeleOpV1 extends OpMode {
 
 //        follower.startTeleopDrive();
 //        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
-        Drawing.sendPacket();
+//        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
+//        Drawing.sendPacket();
 
 
 
@@ -113,9 +113,9 @@ public class TeleOpV1 extends OpMode {
 //        telemetry.update();
 
         //telemetryA.setMsTransmissionInterval(50);
-        telemetryA.addData("Battery", battery.getVoltage());
+//        telemetryA.addData("Battery", battery.getVoltage());
         //telemetryA.addData("Battery", robot.Outtake.getCurrentPosition());
-        telemetryA.update();
+//        telemetryA.update();
     }
 
 
@@ -374,9 +374,9 @@ public class TeleOpV1 extends OpMode {
 //        Drawing.sendPacket();
 //        telemetry.update();
 
-        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
-        Drawing.sendPacket();
-        telemetryA.update();
+//        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
+//        Drawing.sendPacket();
+//        telemetryA.update();
     }
 
 
