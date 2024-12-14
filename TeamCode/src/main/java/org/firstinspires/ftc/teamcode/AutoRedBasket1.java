@@ -83,11 +83,13 @@ public class AutoRedBasket1 extends OpMode {
 
     HardwareRobot robot = new HardwareRobot();          //TODO: will this interfere with follower(hardwareMap)? in .init
 
-    private Pose startPose = new Pose(23.6 * 5 + 16, 39.75, Math.toRadians(90));  //(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(90));
+    //private Pose startPose = new Pose(23.6 * 5 + 16, 39.75, Math.toRadians(90));  //(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(90));
     private Pose pickup1Pose = new Pose(AUTOredSample1X + AUTOfrontIntakePickupLength, AUTOredSample1Y, Math.toRadians(180));
     private Pose pickup2Pose = new Pose(AUTOredSample2X + AUTOfrontIntakePickupLength, AUTOredSample2Y, Math.toRadians(180));
     private Pose pickup3Pose = new Pose(AUTOredSample3X + AUTOfrontIntakePickupLength, AUTOredSample3Y, Math.toRadians(180));
-    private Pose redScorePose = new Pose(23.6 * 5 + 6, 14, Math.toRadians(135));      //(AUTORedNetX, AUTORedNetY, Math.toRadians(135));;
+  //  private Pose redScorePose = new Pose(23.6 * 5 + 6, 14, Math.toRadians(135));      //(AUTORedNetX, AUTORedNetY, Math.toRadians(135));;
+   private Pose startPose = new Pose(140, 0, Math.toRadians(90));  //(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(90));
+   private Pose redScorePose = new Pose(100, 0, Math.toRadians(90));      //(AUTORedNetX, AUTORedNetY, Math.toRadians(135));;
 
 
     public void buildPaths() {
@@ -189,7 +191,7 @@ public class AutoRedBasket1 extends OpMode {
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("heading", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.update();
 
 

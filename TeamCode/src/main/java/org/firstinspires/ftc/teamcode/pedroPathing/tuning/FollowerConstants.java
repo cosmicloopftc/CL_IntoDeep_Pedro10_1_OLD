@@ -34,7 +34,7 @@ public class FollowerConstants {
     //private static double xMovement = 81.34056;
     //private static double yMovement = 65.43028;
     private static double xMovement = 57.29327;  // old robot: 56.30806
-    private static double yMovement = 43.7724;  // old robot: 39.49151
+    private static double yMovement = 49; //43.7724;  // old robot: 39.49151
 
     private static double[] convertToPolar = Point.cartesianToPolar(xMovement, -yMovement);
     public static Vector frontLeftVector = MathFunctions.normalizeVector(new Vector(convertToPolar[0],convertToPolar[1]));
@@ -49,9 +49,9 @@ public class FollowerConstants {
 //            0);
 
     public static CustomPIDFCoefficients translationalPIDFCoefficients = new CustomPIDFCoefficients(
-            0.1,
+            0.6,
             0,
-            0.01,
+            0.05,
             0);
 
 
@@ -131,7 +131,7 @@ public class FollowerConstants {
     // if not negative, then the robot thinks that its going to go faster under 0 power
     //TODO***: change below for our old robot
     //public static double lateralZeroPowerAcceleration = -78.15554;
-    public static double lateralZeroPowerAcceleration = -79.72813;  // -77.175   -84.1407  -77.8687
+    public static double lateralZeroPowerAcceleration = -84.58; //-79.72813;  // -77.175   -84.1407  -77.8687
 
 
     // A multiplier for the zero power acceleration to change the speed the robot decelerates at
@@ -141,7 +141,7 @@ public class FollowerConstants {
     // Decreasing this will cause the deceleration at the end of the Path to be slower, making the
     // robot slower but reducing risk of end-of-path overshoots or localization slippage.
     // This can be set individually for each Path, but this is the default.
-    public static double zeroPowerAccelerationMultiplier = 4.5;
+    public static double zeroPowerAccelerationMultiplier = 4;
 
 
     // When the robot is at the end of its current Path or PathChain and the velocity goes below
