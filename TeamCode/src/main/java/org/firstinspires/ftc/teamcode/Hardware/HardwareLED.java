@@ -28,17 +28,17 @@ public class HardwareLED {
     }
     public void init(HardwareMap hardwareMap) {
 
-        LEDleftGreen = hardwareMap.get(DigitalChannel.class, "leftgreen");               //connect to Digital port 2
-        LEDleftRed = hardwareMap.get(DigitalChannel.class, "leftred");                   //connect to Digital port 3
+        LEDleftGreen = hardwareMap.get(DigitalChannel.class, "leftgreen");               //connect to Digital port 0
+        LEDleftRed = hardwareMap.get(DigitalChannel.class, "leftred");                   //connect to Digital port 1
 
-        LEDleft2Green = hardwareMap.get(DigitalChannel.class, "left2green");               //connect to Digital port 6
-        LEDleft2Red = hardwareMap.get(DigitalChannel.class, "left2red");                   //connect to Digital port 7
+        LEDleft2Green = hardwareMap.get(DigitalChannel.class, "left2green");               //connect to Digital port 2
+        LEDleft2Red = hardwareMap.get(DigitalChannel.class, "left2red");                   //connect to Digital port 3
 
-        LEDrightRed = hardwareMap.get(DigitalChannel.class, "rightgreen");             //connect to Digital port 2
-        LEDrightGreen = hardwareMap.get(DigitalChannel.class, "rightred");             //connect to Digital port 3
+        LEDrightRed = hardwareMap.get(DigitalChannel.class, "rightgreen");             //connect to Digital port 4
+        LEDrightGreen = hardwareMap.get(DigitalChannel.class, "rightred");             //connect to Digital port 5
 
-        LEDright2Green = hardwareMap.get(DigitalChannel.class, "right2green");             //connect to Digital port 4
-        LEDright2Red = hardwareMap.get(DigitalChannel.class, "right2red");                 //connect to Digital port 5
+        LEDright2Green = hardwareMap.get(DigitalChannel.class, "right2green");             //connect to Digital port 6
+        LEDright2Red = hardwareMap.get(DigitalChannel.class, "right2red");                 //connect to Digital port 7
 
 //        colorSensor = hardwareMap.get(ColorSensor.class,"colorSensor");
 

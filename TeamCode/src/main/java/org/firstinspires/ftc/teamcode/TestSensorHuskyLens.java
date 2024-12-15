@@ -79,7 +79,7 @@ public class TestSensorHuskyLens extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
+        huskyLens = hardwareMap.get(HuskyLens.class, "huskyLens");
 
         /*
          * This sample rate limits the reads solely to allow a user time to observe
