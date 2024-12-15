@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -11,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class HardwareIntake {
 
-    public DcMotor intakeSlides = null;
+    public DcMotorEx intakeSlides = null;
 
 
     public CRServo leftIntakeWheel = null;
@@ -31,14 +32,14 @@ public class HardwareIntake {
         //Save reference to Hardware map
 
         //map and setup mode of Intake Slide Motor
-        intakeSlides = hardwareMap.get(DcMotor.class, "intakeSlides");
+        intakeSlides = hardwareMap.get(DcMotorEx.class, "intakeSlides");
         //intake slide motor behaviors
-        intakeSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intakeSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        Slider_Motor_Right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        Slider_Motor_Left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intakeSlides.setDirection(DcMotor.Direction.REVERSE);
+        intakeSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        intakeSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        intakeSlides.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//        Slider_Motor_Right.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        Slider_Motor_Left.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        intakeSlides.setDirection(DcMotorEx.Direction.REVERSE);
         intakeSlides.setPower(0);
 
         //map and setup mode of Intake Continuous Servos
