@@ -13,13 +13,15 @@ import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOstartRedNetX;
 import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOstartRedNetY;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Hardware.HardwareRobot;
+import org.firstinspires.ftc.teamcode.Hardware.HardwareNoDriveTrainRobot;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.PoseUpdater;
@@ -52,16 +54,23 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
  * 11/29/2024: start, ChainPath--start to Sample 3 and then to Net
  *             include FTC Dashboard
  * 12/2/2024 OT:  modify from PedroPathing.com auto example
+ * 12/15/2024 OT: correct strafe pod anchoring; erase negative sign on straf tick/inch
+ *                  and erase reverse of strafe reading; reTune all translational, drive and heading
+ *                  distanceCenterToIntakePickup = 23 inches;
+ *                  distanceCenterToOuttakeBasketDropOff = 13 inches
+ *                  distanceCenterToSideWall = 6.5 inches
+ *                  distanceCentertobackRobot = 9 inches
+ *                  distanceCentertobackWallPickup = 13 inches
  *
  *
  */
+
 
 
 @Config
 @Autonomous(name = "Auto Red Basket v1.0", group = "Auto")
 public class AutoRedBasket1 extends OpMode {
     private Telemetry telemetryA;
-    //private Telemetry telemetry;
 
     private PoseUpdater poseUpdater;
     private DashboardPoseTracker dashboardPoseTracker;
@@ -81,13 +90,23 @@ public class AutoRedBasket1 extends OpMode {
 
 
 
-    HardwareRobot robot = new HardwareRobot();          //TODO: will this interfere with follower(hardwareMap)? in .init
+    HardwareNoDriveTrainRobot autoRobot = new HardwareNoDriveTrainRobot();    //TODO: will this interfere with follower(hardwareMap)? in .init
 
-    private Pose startPose = new Pose(23.6 * 5 + 16, 39.75, Math.toRadians(90));  //(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(90));
+    //private Pose startPose = new Pose(23.6 * 5 + 16, 39.75, Math.toRadians(90));  //(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(90));
     private Pose pickup1Pose = new Pose(AUTOredSample1X + AUTOfrontIntakePickupLength, AUTOredSample1Y, Math.toRadians(180));
     private Pose pickup2Pose = new Pose(AUTOredSample2X + AUTOfrontIntakePickupLength, AUTOredSample2Y, Math.toRadians(180));
     private Pose pickup3Pose = new Pose(AUTOredSample3X + AUTOfrontIntakePickupLength, AUTOredSample3Y, Math.toRadians(180));
-    private Pose redScorePose = new Pose(23.6 * 5 + 6, 14, Math.toRadians(135));      //(AUTORedNetX, AUTORedNetY, Math.toRadians(135));;
+    //private Pose redScorePose = new Pose(23.6 * 5 + 6, 14, Math.toRadians(135));      //(AUTORedNetX, AUTORedNetY, Math.toRadians(135));;
+
+
+    private Pose startPose = new Pose(134, 39.75, Math.toRadians(90));
+    private Pose redScorePose = new Pose(124, 14, Math.toRadians(135));
+
+    //private Pose startPose = new Pose(144, 0, Math.toRadians(90));
+    //private Pose redScorePose = new Pose(104, 0, Math.toRadians(90));
+    //private Pose startPose = new Pose(144, 0, Math.toRadians(180));
+    //private Pose redScorePose = new Pose(104, 0, Math.toRadians(180));
+
 
 
     public void buildPaths() {
@@ -114,6 +133,7 @@ public class AutoRedBasket1 extends OpMode {
         switch (pathState) {
             case 0:     //goto basket and score
                 follower.followPath(preLoadScore);
+                //follower.followPath(preLoadScore, true);
                 setPathState(1);
                 break;
 //            case 1:     //goto specimen 3 and pick it up
@@ -155,21 +175,19 @@ public class AutoRedBasket1 extends OpMode {
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
 
+        autoRobot.init(hardwareMap);   //TODO: check if conflicts with Follower(hardwareMap);note hardwareMap is default and part of FTC Robot Controller HardwareMap class
+
         poseUpdater = new PoseUpdater(hardwareMap);
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
-
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
-
-        robot.init(hardwareMap);   //TODO: check if conflicts with Follower(hardwareMap);note hardwareMap is default and part of FTC Robot Controller HardwareMap class
-
         buildPaths();
 
 
 
-        //telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-        //telemetryA.update();
 
+        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetryA.update();
     }
 
     @Override
@@ -178,6 +196,7 @@ public class AutoRedBasket1 extends OpMode {
     public void start() {
         opmodeTimer.resetTimer();
         setPathState(0);
+
     }
 
 //**********************************************************************************
@@ -185,17 +204,20 @@ public class AutoRedBasket1 extends OpMode {
     public void loop() {
         follower.update();
         autonomousPathUpdate();
+        // telemetryA.addLine("going forward");
+        follower.telemetryDebug(telemetryA);
+        telemetryA.addLine("");
+        telemetryA.addLine("");
+        telemetryA.addData("path state", pathState);
+        telemetryA.addData("x", follower.getPose().getX());
+        telemetryA.addData("y", follower.getPose().getY());
+        telemetryA.addData("heading", Math.toDegrees(follower.getPose().getHeading()));
+       //telemetry.update();
 
-        telemetry.addData("path state", pathState);
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", Math.toDegrees(follower.getPose().getHeading()));
-        telemetry.update();
 
-
-       // telemetryA.addLine("going forward");
-//        follower.telemetryDebug(telemetryA);
-//        telemetryA.update();
+        //poseUpdater.update();
+        //dashboardPoseTracker.update();
+        telemetryA.update();
     }
 
 

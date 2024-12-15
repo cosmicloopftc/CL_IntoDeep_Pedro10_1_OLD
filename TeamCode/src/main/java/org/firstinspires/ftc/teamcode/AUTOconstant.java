@@ -54,7 +54,7 @@ public class AUTOconstant {
     public static double AUTORedNetX = 130.00;           // previsouly: 139              //-71 + 72;
     public static double AUTORedNetY =   14;        //previously: 5               //-58 + 72;
 
-    //Red Observation start //TODO
+    //Red Observation start //TODO--Need replacement
     public static double AUTOredSample4X = 47.5 + 72;    //-(AUTOblueSample1Y);
     public static double AUTOredSample4Y = -23.625 + 72; //-(AUTOblueSample1X);
     public static double AUTOredSample5X = 59.25 + 72;     //-(AUTOblueSample2Y);
@@ -62,7 +62,7 @@ public class AUTOconstant {
     public static double AUTOredSample6X = 71 + 72;      //-(AUTOblueSample3Y);
     public static double AUTOredSample6Y = -23.625 +72;  //-(AUTOblueSample3X);
 
-    // Blue Net start       //TODO
+    // Blue Net start       //TODO--Need replacement
     public static double AUTOblueSample1X =71 + 72;
     public static double AUTOblueSample1Y =23.625 + 72;
     public static double AUTOblueSample2X =59.25 + 72;
@@ -72,7 +72,7 @@ public class AUTOconstant {
     public static double AUTOblueNetX =71 + 72;
     public static double AUTOblueNetY =58 + 72;
 
-    //Blue Observation start        //TODO
+    //Blue Observation start        //TODO--Need replacement
     public static double AUTOblueSample6X =-71 + 72;
     public static double AUTOblueSample6Y =23.625 + 72;
     public static double AUTOblueSample5X =-59.25 + 72;
