@@ -55,8 +55,8 @@ public class ThreeWheelLocalizer extends Localizer {
     private Pose rightEncoderPose;
     private Pose strafeEncoderPose;
     private double totalHeading;
-    public static double FORWARD_TICKS_TO_INCHES = 0.001979;  //0.003958  // 0.002;   //old = 0.00052189;//8192 * 1.37795 * 2 * Math.PI * 0.5008239963;
-    public static double STRAFE_TICKS_TO_INCHES = -0.0029104;  //(-0.003339)*(38/40)*(38/40);  //-0.002968   //-0.005937   //-0.0031;  // old: -0.0029   //old = 0.00052189;//8192 * 1.37795 * 2 * Math.PI * 0.5018874659;
+    public static double FORWARD_TICKS_TO_INCHES = 0.001979;    //0.003958;  //0.001979;  //0.003958  // 0.002;   //old = 0.00052189;//8192 * 1.37795 * 2 * Math.PI * 0.5008239963;
+    public static double STRAFE_TICKS_TO_INCHES =  0.0029104;   //-0.0058208;   //-0.0029104;  //(-0.003339)*(38/40)*(38/40);  //-0.002968   //-0.005937   //-0.0031;  // old: -0.0029   //old = 0.00052189;//8192 * 1.37795 * 2 * Math.PI * 0.5018874659;
     public static double TURN_TICKS_TO_RADIANS =   0.0019919;     //old = 0.00053717;//8192 * 1.37795 * 2 * Math.PI * 0.5;
     //for calibration new turn number = old * (expected reading/actual measured)
     /**
@@ -98,7 +98,7 @@ public class ThreeWheelLocalizer extends Localizer {
         // TODO***: reverse any encoders necessary
        // leftEncoder.setDirection(Encoder.REVERSE);
       //  rightEncoder.setDirection(Encoder.REVERSE);
-        strafeEncoder.setDirection(Encoder.REVERSE);
+        //strafeEncoder.setDirection(Encoder.REVERSE);
 
         setStartPose(setStartPose);
         timer = new NanoTimer();

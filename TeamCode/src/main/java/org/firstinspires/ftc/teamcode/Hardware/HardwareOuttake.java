@@ -1,16 +1,20 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 //modified from FTC Thunderbolts (Sacramento, CA) mentor's program structure
 
 public class HardwareOuttake {
     //    private DcMotor Intake_Motor = null;
-    public DcMotor outtakeLeftSlide = null;
-    public DcMotor outtakeRightSlide = null;
+    public DcMotorEx outtakeLeftSlide = null;
+    public DcMotorEx outtakeRightSlide = null;
 
     public Servo leftOuttakeArm = null;
     public Servo rightOuttakeArm = null;
@@ -23,18 +27,18 @@ public class HardwareOuttake {
     public void init(HardwareMap hardwareMap)    {
         //Save reference to Hardware map
         //map and setup mode of slide motors
-        outtakeLeftSlide = hardwareMap.get(DcMotor.class, "outtakeLeftSlide");
-        outtakeLeftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        outtakeLeftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        outtakeLeftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        outtakeLeftSlide.setDirection(DcMotor.Direction.FORWARD); //It is forward on robot
+        outtakeLeftSlide = hardwareMap.get(DcMotorEx.class, "outtakeLeftSlide");
+        outtakeLeftSlide.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        outtakeLeftSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeLeftSlide.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        outtakeLeftSlide.setDirection(DcMotorEx.Direction.FORWARD); //It is forward on robot
         outtakeLeftSlide.setPower(0);
 
-        outtakeRightSlide = hardwareMap.get(DcMotor.class, "outtakeRightSlide");
-        outtakeRightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        outtakeRightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        outtakeRightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        outtakeRightSlide.setDirection(DcMotor.Direction.REVERSE); //It is reversed on robot
+        outtakeRightSlide = hardwareMap.get(DcMotorEx.class, "outtakeRightSlide");
+        outtakeRightSlide.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        outtakeRightSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeRightSlide.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        outtakeRightSlide.setDirection(DcMotorEx.Direction.REVERSE); //It is reversed on robot
         outtakeRightSlide.setPower(0);
 
         leftOuttakeArm = hardwareMap.get(Servo.class, "leftOuttakeArm");
@@ -137,4 +141,12 @@ public class HardwareOuttake {
         leftOuttakeArm.setPosition(0.05);
         rightOuttakeArm.setPosition(0.95);
     }
+
+    public double getOuttakeSliderRightCurrent(){
+        return outtakeRightSlide.getCurrent(CurrentUnit.MILLIAMPS);
+    }
+    public double getOuttakeSliderLeftCurrent(){
+        return outtakeLeftSlide.getCurrent(CurrentUnit.MILLIAMPS);
+    }
+
 }
