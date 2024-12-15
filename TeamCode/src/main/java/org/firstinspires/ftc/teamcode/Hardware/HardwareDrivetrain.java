@@ -40,13 +40,13 @@ public class HardwareDrivetrain {
         rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        leftRear.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightRear.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorEx.Direction.REVERSE);
+        leftRear.setDirection(DcMotorEx.Direction.REVERSE);
 //        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
 //        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         setMotorPower(0,0,0,0);
@@ -61,6 +61,7 @@ public class HardwareDrivetrain {
     public void stop (){
         setMotorPower(0,0,0,0);
     }
+
     public static void setMotorPower(double RF, double LF, double RB, double LB) {
         rightFront.setPower(RF);
         leftFront.setPower(LF);
@@ -68,5 +69,28 @@ public class HardwareDrivetrain {
         leftRear.setPower(LB);
     }
 
+//12/18/2024 BELOW IS COMMENTED OUT SINCE THERE IS NO NEED FOR DRIVETRAIN METHOD IN THIS VERSION
+//    simplify driving move, based on Learn Java for FTC p. 145-146, Oct 2023
+//    botheading is used for fieldOriented (driver's perspective driving)
+    public void drive(double forward, double right, double rotate, double power, double botHeading, String drivingOrientation) {
+        if (drivingOrientation == "fieldOriented") {
+            driveTheta = Math.atan2(forward, right);                         //convert to polar
+            r = Math.hypot(forward, right);                                  //convert to polar
+            driveTheta = AngleUnit.normalizeRadians(driveTheta - botHeading);       // rotate angle
+            newForward = r * Math.sin(driveTheta);
+            newRight = 1.1 * r * Math.cos(driveTheta);  //factor = 1.1; correct for strafe imperfection; convert back to cartesian
+        }
+        if (drivingOrientation == "robotOriented") {
+            newForward = forward;
+            newRight = right;
+        }
+        double denominator = Math.max(Math.abs(newForward) + Math.abs(newRight) + Math.abs(rotate), 1);
+        double frontLeftPower =     power*(newForward + newRight + rotate)/denominator;
+        double frontRightPower = power*(newForward - newRight - rotate)/denominator;
+        double backLeftPower = power*(newForward - newRight + rotate)/denominator;
+        double backRightPower = power*(newForward + newRight - rotate)/denominator;
+
+        setMotorPower(frontRightPower, frontLeftPower, backRightPower, backLeftPower);
+    }
 
 }

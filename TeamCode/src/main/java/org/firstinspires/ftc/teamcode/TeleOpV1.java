@@ -8,21 +8,26 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Hardware.HardwareDrivetrain;
 import org.firstinspires.ftc.teamcode.Hardware.HardwareIntake;
+import org.firstinspires.ftc.teamcode.Hardware.HardwareNoDriveTrainRobot;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.Hardware.HardwareRobot;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.PoseUpdater;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.DashboardPoseTracker;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.Range;
 
 /**
  * This is the TeleOpEnhancements OpMode. It is an example usage of the TeleOp enhancements that
@@ -33,28 +38,44 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
  10/13/2024OT: transfer over PedroPath TeleOp from previous Pedropath tuning
  10/13/2024WT: transfer PedroPath tuning info
  10/14/2024MT/WT: add manual driving, not using PedroPath Follower
- 10/24/2024WT: correct HardwareLED class, rename in AdafruitLED object name
+ 10/24/2024WT: correct HardwareLED class, rename in AdafruitLED object name--12/16/2024---LED HardwareLED() with both regualr LED and Adafruit long LED string
  11/1/2024: Allow for high and low basket scoring with no intaking
  11/23/2024: Allow for more than 1 time intaking + wall intake in start state w/specimen positions
  11/26/2024: Fix the outtake finite state machine conditions
  11/27/2024: Fixed and improved specimen scoring
  11/28/2024: Allow to go from specimen scoring directly back to wall intake
- 11/30/2024:  Add TelemetryA and Drawing for FTC Dashboard access
+ 11/30/2024, 12/17/2024:  Add TelemetryA and Drawing for FTC Dashboard access
+ 12/17/2024:    add slide motor current draw
+ 12/18/2024: note HardwareNoDriveTrainRobot = pull all hardware mapping/function into here except for drivetrain motors
+                  HardwareRobot = pull all hardware mapping/function including drivetrain motors
+             Add PedroPathing teleop control (Note: Follower object has the drivetrain motor mapping already),
+                 Fix option for non-PedroPathing teleop control if desired later
+                 by using HardwareDrivetrain and HardwareNoDrivetrainRobot separately
+             Activate PedroPathing teleop by: 1) use follower.startTeleopDrive() in start() loop and comment out drive comments in loop()
+             Use regular driving with the opposite of above.
  */
 
 
 
 @Config    //need this to allow appearance in FtcDashboard Configuration to make adjust of variables
-@TeleOp(group="Primary", name= "TeleOpV1.0")
+@TeleOp(group="Primary", name= "TeleOpV1.1")
 public class TeleOpV1 extends OpMode {
     private Telemetry telemetryA;
+
+    //based on Robot-Centric Teleop  from @author Baron Henderson - 20077 The Indubitables
+    // * @version 2.0, 11/28/2024
     private Follower follower;
+    private final Pose startPose = new Pose(0,0,0);  //TODO: Later, reset this to transfer location from Auto
+
+
     private PoseUpdater poseUpdater;
     private DashboardPoseTracker dashboardPoseTracker;
-    private Telemetry telemetry;
     public static double intakeSlidesCurrent;
 
-    HardwareRobot robot = new HardwareRobot();
+    //label robot for all hardware except drivetrain; and drivetrain is a separate object
+    HardwareNoDriveTrainRobot robot = new HardwareNoDriveTrainRobot();
+    HardwareDrivetrain drivetrain = new HardwareDrivetrain();
+
     VoltageSensor battery;
 
 
@@ -72,28 +93,31 @@ public class TeleOpV1 extends OpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     double botHeading;
-    String drivingOrientation = "robotOriented";                //TODO: as default for Eduardo, but will also reset in init as well.
+    String drivingOrientation = "robotOriented";   //TODO: as default for Eduardo, but will also reset in init as well.
     double lastTime;
     double imuAngle;
     String outtakeOption = "";
+
+
 //Declare variables for standard driving--not using PedroPath follower method (using Learn JAVA for FTC book)
     double y, x, rx, powerShift;
     //double newForward = 0, newRight = 0, driveTheta = 0, r = 0, powerShift = 0;
 
-
+//__________________________________________________________________________________________________
     @Override
     public void init() {
         poseUpdater = new PoseUpdater(hardwareMap);
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
         follower = new Follower(hardwareMap);
 
-        robot.init(hardwareMap);   //note hardwareMap is default and part of FTC Robot Controller HardwareMap class
+        robot.init(hardwareMap);   //for all hardware except drivetrain.  note hardwareMap is default and part of FTC Robot Controller HardwareMap class
         robot.imu.resetYaw();      //reset the IMU/Gyro angle with each match.
-        runtime.reset();
+        drivetrain.init(hardwareMap);   //for drivetrain only
+
         battery = hardwareMap.voltageSensor.get("Control Hub");
 
 
-//        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         //Important Step 2: Get access to a list of Expansion Hub Modules to enable changing caching methods.
@@ -102,50 +126,62 @@ public class TeleOpV1 extends OpMode {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+
 //        follower.startTeleopDrive();
-//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 //        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
 //        Drawing.sendPacket();
 
 
 
-//        telemetry.addData(">", "Hardware Initialized");
-//        telemetry.update();
+        telemetryA.addData(">", "Hardware Initialization complete");
+        telemetryA.update();
+        runtime.reset();
 
-        //telemetryA.setMsTransmissionInterval(50);
-//        telemetryA.addData("Battery", battery.getVoltage());
-        //telemetryA.addData("Battery", robot.Outtake.getCurrentPosition());
-//        telemetryA.update();
     }
 
 
     @Override
     public void init_loop() {
-//        telemetry.addData("Present Heading by IMU in degree = ", "(%.1f)", robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-//        telemetry.addData("Robot Driving Orientation = ", drivingOrientation);
-//        telemetry.update();
+        //telemetryA.addData("Present Heading by IMU in degree = ", "(%.1f)", robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        bulkReadTELEOP();
+        botHeading = imuAngle;
 
-        robot.AdafruitLED.LEDinitReady();
+        robot.LED.LEDinitReady();
 
+        telemetryA.setMsTransmissionInterval(50);
+        telemetryA.addData("Battery Voltage (V): ", "%.1f", battery.getVoltage());
+        telemetryA.addData("Bot Heading--imu Yaw (degrees): ", "%.1f", botHeading);
+        telemetryA.addData("Robot Driving Orientation if not PedroPath = ", drivingOrientation);
+        telemetryA.addLine("");
+        telemetryA.addData("Outtake left slide position: ", robot.Outtake.outtakeRightSlide.getCurrentPosition());
+        telemetryA.addData("Outtake right slide position: ",  robot.Outtake.outtakeLeftSlide.getCurrentPosition());
+        telemetryA.addLine("");
+        telemetryA.addLine("current check--current spike if stalling");
+        //when stalling/spike is detected, it means the slide is at lowest or max position and so can reset it as zero position
+        telemetryA.addData("Outtake left slide motor current (mA): ", "%.1f", robot.Outtake.outtakeRightSlide.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetryA.addData("Outtake right slide motor current (mA): ",  "%.1f", robot.Outtake.outtakeLeftSlide.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetryA.update();
     }
 
+//-------------------------------------------------------------------------------------------------
     @Override
     public void start() {
         robot.start();
         runtime.reset();
         drivingOrientation = "robotOriented";
         state = State.START;
+
+        //This starts teleop drive control by 1. breakFollowing() and set teleopDrive = true;
+        //If regular manual control by JAVA for FTC method, then comment this out.
+        follower.startTeleopDrive();
     }
 
     @Override
     public void loop() {
-//        bulkReadTELEOP();
-//        telemetry.addData("State = ", state);
-//        telemetry.addData("Runtime = ", "(%.1f)", getRuntime());
-//        telemetry.addData("Robot Driving Orientation = ", drivingOrientation);
-//        telemetry.addData("Present Heading by IMU in degree = ", "(%.1f)", imuAngle);
-         //telemetry.addData("Time in State = ", 0);
-        //telemetry.addData("lastTime = ", lastTime);
+        bulkReadTELEOP();
+        botHeading = imuAngle;
+
+
 
 
 
@@ -328,8 +364,11 @@ public class TeleOpV1 extends OpMode {
                 break;
         }
 
-        //Drivetrain Movement:
-        //MANUAL DRIVE for Mecanum wheel drive.
+
+
+
+//Drivetrain Movement:
+//MANUAL DRIVE for Mecanum wheel drive.
         y = -gamepad1.left_stick_y;           // Remember,joystick value is reversed!
         x = gamepad1.left_stick_x;
         rx = gamepad1.right_stick_x;
@@ -343,11 +382,11 @@ public class TeleOpV1 extends OpMode {
             x = x;
         }
         //DRIVETRAIN
-        //baseline:  reduce motor speed to 50% max
+        //baseline speed =  reduce motor speed to 60% max
         double motorPowerDefault = 0.6;
         double powerChange;
 
-//SLOW DOWN with RIGHT LOWER TRIGGER (lower of the top side button) press with the other gamepad stick.
+        //SLOW DOWN with RIGHT LOWER TRIGGER (lower of the top side button) press with the other gamepad stick.
         if ((Math.abs(gamepad1.left_stick_y) > 0.1 && gamepad1.right_trigger > 0.1) || (Math.abs(gamepad1.left_stick_x) > 0.1 && gamepad1.right_trigger > 0.1) || (Math.abs(gamepad1.right_stick_x) > 0.1 && gamepad1.right_trigger > 0.1)) {
             powerChange = -0.3;
             //SPEED UP with RIGHT UPPER BUMPER (up of the top side button) press with the other gamepad stick.
@@ -357,33 +396,61 @@ public class TeleOpV1 extends OpMode {
             powerChange = 0;
         }
         powerShift = motorPowerDefault + powerChange;
-        //robot.Intake.IntakeIN();
-        robot.drive(y, x, rx, powerShift, botHeading, drivingOrientation);
+
+/**12/18/2024--THIS IS COMMENTED OUT WHEN USING PEDROPATHING TO DRIVE ROBOT
+        drivetrain.drive(y, x, rx, powerShift, botHeading, drivingOrientation);
+ */
 
 
-//        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
-//        follower.update();
 
-//        telemetry.addData("x = ", poseUpdater.getPose().getX());
-//        telemetry.addData("y =", poseUpdater.getPose().getY());
-//        telemetry.addData("Odom. heading = ", poseUpdater.getPose().getHeading());
-//        telemetry.addData("Odom. total heading = ", poseUpdater.getTotalHeading());
+
+
+/** Comment out if using regular drivetrain to drive robot, otherwise use below.
+ * Update Pedro to move the robot based on:
+        - Forward/Backward Movement: -gamepad1.left_stick_y
+        - Left/Right Movement: -gamepad1.left_stick_x
+        - Turn Left/Right Movement: -gamepad1.right_stick_x
+        - Robot-Centric Mode: true
+        --original:  follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+ */
+        follower.setTeleOpMovementVectors(-y*powerShift, -x*powerShift, -rx*powerShift, true);
+        //follower.setTeleOpMovementVectors(
+        //        Range.clip(-y,-powerShift, +powerShift),
+        //        Range.clip(-x,-powerShift, +powerShift),
+        //        -rx*powerShift, true);
+        follower.update();
+
+
+
+        telemetryA.addData("X ", follower.getPose().getX());
+        telemetryA.addData("Y ", follower.getPose().getY());
+        telemetryA.addData("Bot Heading--PedroPathing (degrees)", "%.1f", Math.toDegrees(follower.getPose().getHeading()));
+        telemetryA.addLine("");
+        telemetryA.addData("Bot Heading--imu Yaw (degrees)", "%.1f", botHeading);
+        telemetryA.addLine("");
+        telemetryA.addData("Runtime (seconds) = ", "%.1f", getRuntime());
+        //telemetryA.addData("Robot Driving Orientation = ", drivingOrientation);
+        telemetryA.addData("State = ", state);
+        telemetryA.addData("Time in State (seconds) = ", 0);
+        telemetryA.addData("lastTime = ", lastTime);
+
+
+
 
 //        Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
 //        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
 //        Drawing.sendPacket();
 //        telemetry.update();
+        telemetryA.update();
 
-//        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
-//        Drawing.sendPacket();
-//        telemetryA.update();
+
     }
 
 
     @Override
     public void stop() {
         robot.stop();
-        HardwareDrivetrain.setMotorPower(0, 0, 0, 0);
+        drivetrain.setMotorPower(0, 0, 0, 0);
     }
 
 

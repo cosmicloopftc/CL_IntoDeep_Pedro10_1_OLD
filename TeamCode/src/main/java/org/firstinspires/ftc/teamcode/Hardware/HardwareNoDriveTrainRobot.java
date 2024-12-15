@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-
-import java.util.List;
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
+import java.util.List;
 
 //modified from FTC Thunderbolts (Sacramento, CA) mentor's program structure
 //***This was setup for OpMode but can be it used for LinearOpMode also?
@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 //LinearOpMode structure: runOpMode(), waitForStart(), isStarted(), isStopRequested(), idle(), opModeIsActive(), opModeInInit()
 
 @Config
-public class HardwareRobot {
+public class HardwareNoDriveTrainRobot {
 //**ADD assignment of variables here for subsequent connected device.
 
 /* example use of enum from FTC Thunderbolts (Sacramento, CA) mentor's program structure
@@ -41,7 +41,7 @@ public class HardwareRobot {
     public IMU imu;
 
     //**Create variable name for an object to be created--THIS IS WHERE new device setup is added.
-    public HardwareDrivetrain Drivetrain = null;
+//    public HardwareDrivetrain Drivetrain = null;
     public HardwareIntake Intake = null;
     public HardwareOuttake Outtake = null;
     public HardwareHang Hang = null;
@@ -52,7 +52,7 @@ public class HardwareRobot {
 
 
     //**ADD on subsequent connected device.
-    boolean drivetrainConnected = true;
+//    boolean drivetrainConnected = true;
     boolean intakeConnected = true;
     boolean outtakeConnected = true;
     boolean hangConnected = false;
@@ -66,11 +66,11 @@ public class HardwareRobot {
     LynxModule EXPHub = null;
 
 //declare variables for the "drive" method.
-    double driveTheta, r, newRight, newForward;
+//    double driveTheta, r, newRight, newForward;
 
 
     /*Constructor*/
-    public HardwareRobot() {
+    public HardwareNoDriveTrainRobot() {
 
     }
 
@@ -93,10 +93,10 @@ public class HardwareRobot {
 
 
         //map and setup mode of drivetrain motors
-        if (drivetrainConnected){
-            Drivetrain = new HardwareDrivetrain();
-            Drivetrain.init(hardwareMap);
-        }
+//        if (drivetrainConnected){
+//            Drivetrain = new HardwareDrivetrain();
+//            Drivetrain.init(hardwareMap);
+//        }
 
         //map and setup mode of Intake motors
         if (intakeConnected) {
@@ -190,27 +190,30 @@ public class HardwareRobot {
         return bulkArray;
     }
 
+
+
+//12/18/2024 BELOW IS COMMENTED OUT SINCE THERE IS NO NEED FOR DRIVETRAIN METHOD IN THIS VERSION
     //simplify driving move, based on Learn Java for FTC p. 145-146, Oct 2023
     //botheading is used for fieldOriented (driver's perspective driving)
-    public void drive(double forward, double right, double rotate, double power, double botHeading, String drivingOrientation) {
-        if (drivingOrientation == "fieldOriented") {
-            driveTheta = Math.atan2(forward, right);                         //convert to polar
-            r = Math.hypot(forward, right);                                  //convert to polar
-            driveTheta = AngleUnit.normalizeRadians(driveTheta - botHeading);       // rotate angle
-            newForward = r * Math.sin(driveTheta);
-            newRight = 1.1 * r * Math.cos(driveTheta);  //factor = 1.1; correct for strafe imperfection; convert back to cartesian
-        }
-        if (drivingOrientation == "robotOriented") {
-            newForward = forward;
-            newRight = right;
-        }
-        double denominator = Math.max(Math.abs(newForward) + Math.abs(newRight) + Math.abs(rotate), 1);
-        double frontLeftPower =     power*(newForward + newRight + rotate)/denominator;
-        double frontRightPower = power*(newForward - newRight - rotate)/denominator;
-        double backLeftPower = power*(newForward - newRight + rotate)/denominator;
-        double backRightPower = power*(newForward + newRight - rotate)/denominator;
-
-        HardwareDrivetrain.setMotorPower(frontRightPower, frontLeftPower, backRightPower, backLeftPower);
-    }
+//    public void drive(double forward, double right, double rotate, double power, double botHeading, String drivingOrientation) {
+//        if (drivingOrientation == "fieldOriented") {
+//            driveTheta = Math.atan2(forward, right);                         //convert to polar
+//            r = Math.hypot(forward, right);                                  //convert to polar
+//            driveTheta = AngleUnit.normalizeRadians(driveTheta - botHeading);       // rotate angle
+//            newForward = r * Math.sin(driveTheta);
+//            newRight = 1.1 * r * Math.cos(driveTheta);  //factor = 1.1; correct for strafe imperfection; convert back to cartesian
+//        }
+//        if (drivingOrientation == "robotOriented") {
+//            newForward = forward;
+//            newRight = right;
+//        }
+//        double denominator = Math.max(Math.abs(newForward) + Math.abs(newRight) + Math.abs(rotate), 1);
+//        double frontLeftPower =     power*(newForward + newRight + rotate)/denominator;
+//        double frontRightPower = power*(newForward - newRight - rotate)/denominator;
+//        double backLeftPower = power*(newForward - newRight + rotate)/denominator;
+//        double backRightPower = power*(newForward + newRight - rotate)/denominator;
+//
+//        HardwareDrivetrain.setMotorPower(frontRightPower, frontLeftPower, backRightPower, backLeftPower);
+//    }
 
 }

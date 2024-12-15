@@ -49,9 +49,9 @@ public class FollowerConstants {
 //            0);
 
     public static CustomPIDFCoefficients translationalPIDFCoefficients = new CustomPIDFCoefficients(
-            0.6,
+            0.41,
             0,
-            0.05,
+            0.050,
             0);
 //(0.1, 0, 0.01, 0)  on 12/14/2024 before strafe correction of translational
 
