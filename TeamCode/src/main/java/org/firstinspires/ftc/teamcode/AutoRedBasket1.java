@@ -83,11 +83,21 @@ public class AutoRedBasket1 extends OpMode {
 
     HardwareRobot robot = new HardwareRobot();          //TODO: will this interfere with follower(hardwareMap)? in .init
 
-    private Pose startPose = new Pose(23.6 * 5 + 16, 39.75, Math.toRadians(90));  //(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(90));
+    //private Pose startPose = new Pose(23.6 * 5 + 16, 39.75, Math.toRadians(90));  //(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(90));
     private Pose pickup1Pose = new Pose(AUTOredSample1X + AUTOfrontIntakePickupLength, AUTOredSample1Y, Math.toRadians(180));
     private Pose pickup2Pose = new Pose(AUTOredSample2X + AUTOfrontIntakePickupLength, AUTOredSample2Y, Math.toRadians(180));
     private Pose pickup3Pose = new Pose(AUTOredSample3X + AUTOfrontIntakePickupLength, AUTOredSample3Y, Math.toRadians(180));
-    private Pose redScorePose = new Pose(23.6 * 5 + 6, 14, Math.toRadians(135));      //(AUTORedNetX, AUTORedNetY, Math.toRadians(135));;
+    //private Pose redScorePose = new Pose(23.6 * 5 + 6, 14, Math.toRadians(135));      //(AUTORedNetX, AUTORedNetY, Math.toRadians(135));;
+
+
+    private Pose startPose = new Pose(134, 39.75, Math.toRadians(90));
+    private Pose redScorePose = new Pose(124, 14, Math.toRadians(135));
+
+    //private Pose startPose = new Pose(144, 0, Math.toRadians(90));
+    //private Pose redScorePose = new Pose(104, 0, Math.toRadians(90));
+    //private Pose startPose = new Pose(144, 0, Math.toRadians(180));
+    //private Pose redScorePose = new Pose(104, 0, Math.toRadians(180));
+
 
 
     public void buildPaths() {
