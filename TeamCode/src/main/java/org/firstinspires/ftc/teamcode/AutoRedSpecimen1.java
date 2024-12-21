@@ -1,33 +1,26 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTORedNetX;
-import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTORedNetY;
 import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOfrontIntakePickupLength;
 import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOredSample1X;
 import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOredSample1Y;
 import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOredSample2X;
 import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOredSample2Y;
-import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOredSample3X;
-import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOredSample3Y;
-import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOstartRedNetX;
-import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOstartRedNetY;
-
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import  com.qualcomm.robotcore.util.RobotLog;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Hardware.HardwareNoDriveTrainRobot;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
+import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.PoseUpdater;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.DashboardPoseTracker;
@@ -63,18 +56,17 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
  *                  distanceCentertobackRobot = 9 inches
  *                  distanceCentertobackWallPickup = 13 inches
  *12/20/2024 MT: add subsystem actions and add pathChain to first sample pickup
- *12/22/2024 ER DC: autoBasket update
- *12/22/2024 OT:    add debugging message
  *
+ *12/22/2024 OT: start this Auto Specimen-Red
+ *               Add debug code
  */
 
 
 
 @Config
-@Autonomous(name = "Auto Red Basket v1.1", group = "Auto")
-public class AutoRedBasket1 extends OpMode {
+@Autonomous(name = "Auto Red Specimen v1.1", group = "Auto")
+public class AutoRedSpecimen1 extends OpMode {
     int debugLevel = 499;
-
     private Telemetry telemetryA;
 
     private PoseUpdater poseUpdater;
@@ -89,30 +81,35 @@ public class AutoRedBasket1 extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
     // private Pose sample1Pose, sample2Pose, sample3Pose, sample4Pose, sample5Pose, sample6Pose, redNet, blueNet;
-    private PathChain preLoadScore, preLoadScoreStop;
-    private PathChain prePickupSample3, pickupSample3, pickupSample2, pickupSample1;
-    private PathChain scoreSample3, preScoreSample3, scoreSample2, scoreSample1;
+    private PathChain preLoadSpecScore;
+    private PathChain afterScore1, afterScore2, afterScore3;
+    private PathChain sample1, sample2, sample3;
 
 
 
     HardwareNoDriveTrainRobot autoRobot = new HardwareNoDriveTrainRobot();    //TODO: will this interfere with follower(hardwareMap)? in .init
 
     //private Pose startPose = new Pose(23.6 * 5 + 16, 39.75, Math.toRadians(90));  //(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(90));
-    private Pose pickup1Pose = new Pose(AUTOredSample1X + AUTOfrontIntakePickupLength, AUTOredSample1Y, Math.toRadians(180));
-    private Pose pickup2Pose = new Pose(AUTOredSample2X + AUTOfrontIntakePickupLength, AUTOredSample2Y, Math.toRadians(180));
+    private Pose specScorePose = new Pose(107, 77.5, Math.toRadians(0));
+    private Pose afterScorePose1 = new Pose(117, 77.5, Math.toRadians(0));
 //    private Pose pickup3Pose = new Pose(AUTOredSample3X + AUTOfrontIntakePickupLength, AUTOredSample3Y, Math.toRadians(180));
-    //private Pose pickup3Pose = new Pose(125, 19.5, Math.toRadians(180));
-    //private Pose moveForward = new Pose(120, 19.5, Math.toRadians(180));
+    private Pose afterScorePose2 = new Pose(117, 107.5, Math.toRadians(0));
+    private Pose afterScorePose3 = new Pose(88, 107.5, Math.toRadians(0));
+    private Pose sample1Pose = new Pose(88, 116.5, Math.toRadians(0));
+    private Pose sample2Pose = new Pose(88, 126.5, Math.toRadians(0));
+    private Pose sample3Pose = new Pose(88, 131.5, Math.toRadians(0));
+    private Pose observationSample1 = new Pose(131, 116.5, Math.toRadians(0));
+    private Pose observationSample2 = new Pose(131, 126.5, Math.toRadians(0));
+    private Pose observationSample3 = new Pose(131, 131.5, Math.toRadians(0));
+
 
 //    //private Pose redScorePose = new Pose(23.6 * 5 + 6, 14, Math.toRadians(135));      //(AUTORedNetX, AUTORedNetY, Math.toRadians(135));;
 
 
-    private Pose startPose = new Pose(134, 39.75, Math.toRadians(90));
-    private Pose preRedScorePose = new Pose(118, 17, Math.toRadians(135));
-    private Pose redScorePose = new Pose(121, 14, Math.toRadians(135));
+    private Pose startPose = new Pose(137, 77.5, Math.toRadians(0));
 
-    private Pose prePickup3Pose = new Pose(130, 19.5, Math.toRadians(180));
-    private Pose pickup3Pose = new Pose(125, 19.5, Math.toRadians(180));
+ //   private Pose preScorePose = new Pose(118, 17, Math.toRadians(135));
+    private Pose redScorePose = new Pose(121, 14, Math.toRadians(135));
 
     //private Pose startPose = new Pose(144, 0, Math.toRadians(90));
     //private Pose redScorePose = new Pose(104, 0, Math.toRadians(90));
@@ -125,29 +122,70 @@ public class AutoRedBasket1 extends OpMode {
         //preLoadScore = new Path(new BezierLine(new Point(startPose), new Point(redScorePose)));
         //preLoadScore.setLinearHeadingInterpolation(startPose.getHeading(), redScorePose.getHeading());
 
-        //pathChain
-        preLoadScoreStop = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(startPose), new Point(preRedScorePose)))
-                .setLinearHeadingInterpolation(startPose.getHeading(), preRedScorePose.getHeading())
+        //pathChain for preLoadSpecScore position
+        preLoadSpecScore = follower.pathBuilder()
+                  .addPath(new BezierLine(new Point(startPose), new Point(specScorePose)))
+                  .setLinearHeadingInterpolation(startPose.getHeading(), specScorePose.getHeading())
+                  .build();
+        afterScore1 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specScorePose), new Point(afterScorePose1)))
+                .setLinearHeadingInterpolation(specScorePose.getHeading(), afterScorePose1.getHeading())
                 .build();
-        preLoadScore = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(preRedScorePose), new Point(redScorePose)))
-                .setLinearHeadingInterpolation(preRedScorePose.getHeading(), redScorePose.getHeading())
+        afterScore2 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(afterScorePose1), new Point(afterScorePose2)))
+                .setLinearHeadingInterpolation(afterScorePose1.getHeading(), afterScorePose2.getHeading())
                 .build();
-
-        prePickupSample3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(redScorePose), new Point(prePickup3Pose)))
-                .setLinearHeadingInterpolation(redScorePose.getHeading(), prePickup3Pose.getHeading())            //one Heading only
-                .build();
-        pickupSample3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(prePickup3Pose), new Point(pickup3Pose)))
-                .setLinearHeadingInterpolation(prePickup3Pose.getHeading(), pickup3Pose.getHeading())            //one Heading only
-                .build();
-        preScoreSample3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pickup3Pose), new Point(preRedScorePose)))
-                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), preRedScorePose.getHeading())
+        afterScore3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(afterScorePose2), new Point(afterScorePose3)))
+                .setLinearHeadingInterpolation(afterScorePose2.getHeading(), afterScorePose3.getHeading())
                 .build();
 
+//        afterScore1 = follower.pathBuilder()
+//                .addPath(new BezierCurve(new Point(specScorePose), new Point(afterScorePose1),
+//                        new Point(afterScorePose2), new Point(afterScorePose3)))
+//                .setLinearHeadingInterpolation(specScorePose.getHeading(), afterScorePose3.getHeading())
+//                .build();
+
+        sample1 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(afterScorePose3), new Point(sample1Pose)))
+                .setLinearHeadingInterpolation(afterScorePose3.getHeading(), sample1Pose.getHeading())
+                .addPath(new BezierLine(new Point(sample1Pose), new Point(observationSample1)))
+                .setLinearHeadingInterpolation(sample1Pose.getHeading(), observationSample1.getHeading())
+                .addPath(new BezierLine(new Point(observationSample1), new Point(sample1Pose)))
+                .setLinearHeadingInterpolation(observationSample1.getHeading(), sample1Pose.getHeading())
+                .build();
+        sample2 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(sample1Pose), new Point(sample2Pose)))
+                .setLinearHeadingInterpolation(sample1Pose.getHeading(), sample2Pose.getHeading())
+                .addPath(new BezierLine(new Point(sample2Pose), new Point(observationSample2)))
+                .setLinearHeadingInterpolation(sample2Pose.getHeading(), observationSample2.getHeading())
+                .addPath(new BezierLine(new Point(observationSample2), new Point(sample2Pose)))
+                .setLinearHeadingInterpolation(observationSample2.getHeading(), sample2Pose.getHeading())
+                .build();
+        sample3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(sample2Pose), new Point(sample3Pose)))
+                .setLinearHeadingInterpolation(sample2Pose.getHeading(), sample3Pose.getHeading())
+                .addPath(new BezierLine(new Point(sample3Pose), new Point(observationSample3)))
+                .setLinearHeadingInterpolation(sample3Pose.getHeading(), observationSample3.getHeading())
+                .addPath(new BezierLine(new Point(observationSample3), new Point(sample3Pose)))
+                .setLinearHeadingInterpolation(observationSample3.getHeading(), sample3Pose.getHeading())
+                .build();
+
+
+
+//        creating pathChain
+//        pickupSample3 = follower.pathBuilder()
+//                .addPath(new BezierLine(new Point(redScorePose), new Point(pickup3Pose)))
+//                .setLinearHeadingInterpolation(redScorePose.getHeading(), pickup3Pose.getHeading())            //one Heading only
+//                .build();
+//        preScoreSample3 = follower.pathBuilder()
+//                .addPath(new BezierLine(new Point(pickup3Pose), new Point(moveForward)))
+//                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), moveForward.getHeading())            //one Heading only
+//                .build();
+//        scoreSample3 = follower.pathBuilder()
+//                .addPath(new BezierLine(new Point(moveForward), new Point(redScorePose)))
+//                .setLinearHeadingInterpolation(moveForward.getHeading(), redScorePose.getHeading())
+//                .build();
     }
 
 
@@ -162,7 +200,7 @@ public class AutoRedBasket1 extends OpMode {
 
                 //TODO:start to raise outtake slider, start rotating outtake when halfway up
                 autoRobot.Outtake.closeClaw();
-                autoRobot.Outtake.highBasket();
+                autoRobot.Outtake.highChamberSet();
                 autoRobot.Intake.intakeUP();
                 autoRobot.Intake.intakeSlideIN();
 //                autoRobot.Outtake.leftSlideSetPositionPower(3400,1);
@@ -170,73 +208,58 @@ public class AutoRedBasket1 extends OpMode {
 //                if (pathTimer.getElapsedTimeSeconds()>5){
 //                    autoRobot.Outtake.highBasket();
 //                }
-                autoDebug(500, "Auto:0", "raise outtake-high basket");
-                follower.followPath(preLoadScoreStop, false);
+                autoDebug(500, "Case:0 START", "Raise Slider to Specimen score");
+                follower.followPath(preLoadSpecScore, false);
                 setPathState(1);
                 break;
             case 1:     //goto specimen 3 and pick it up
 //                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (pathTimer.getElapsedTimeSeconds()>2.5) {
-                    autoDebug(500, "Auto:1; after 2.5sec", "Go to basket");
-                    follower.followPath(preLoadScore, true);
+                if (pathTimer.getElapsedTimeSeconds()>5) {
+                    autoDebug(500, "Auto:case 1; 5 sec ", "score specimen");
+                    autoRobot.Outtake.highChamberFinish();
+                    autoDebug(500, "Auto:case 1; ", "lower slide to wall pickup");
+                    follower.followPath(afterScore1, true);
                     follower.setMaxPower(0.2);
+                    autoDebug(500, "Auto:case 1; ", "move back from Submersible");
                     setPathState(2);
 
                 }
                 break;
             case 2:     //goto specimen 3 and pick it up
 //                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (follower.getPose().getX() > (redScorePose.getX() - 1) && follower.getPose().getY() > (redScorePose.getY() - 1)) {
+                if (pathTimer.getElapsedTimeSeconds()>3) {
                     /* Score Preload */
                     //TODO: rotate outtake and open claw/outtake to drop sample
-                    autoDebug(500, "Auto:2; w/i 1 inch of basket", "score high basket");
-                    autoRobot.Outtake.openClaw();
-                    autoRobot.Outtake.readyPosition();
-                    autoRobot.Outtake.groundPositionOpen();
-                    autoRobot.Intake.intakeUP();
-                    autoRobot.Intake.intakeSlideIN();
+
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     //then go to next path--go to Specimen 3 pickup position
-                    follower.followPath(prePickupSample3,false);
-                    autoDebug(500, "Auto:2; prePickupSample3", "heading toward prePickupSample3");
+//                    follower.followPath(afterScore1,false);
                     setPathState(3);
                 }
 
                 break;
-            case 3:     //goto basket and score
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
-                if (pathTimer.getElapsedTimeSeconds()>3) {
-                    /* Grab Sample */
-
-                    //TODO: do something
-                    // Extend intake
-                    autoDebug(500, "Auto:3; after 3 sec", "extend intake MID");
-                    autoRobot.Intake.intakeSlideMID();
-                    autoRobot.Intake.intakeSlideOUT();
-                    // Move intake down
-                    autoRobot.Intake.intakeDOWN();
-                    follower.followPath(pickupSample3, true);
-                    follower.setMaxPower(0.2);
-                    autoDebug(500, "Auto:3", "heading toward Sample 3");
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    setPathState(4);
-                }
-                break;
-            case 4:
-                if (pathTimer.getElapsedTimeSeconds()>3) {
-                    // Intake sample
-                    autoDebug(500, "Auto:4; 3 sec", "heading toward preRedBasket");
-                    autoRobot.Intake.intakeIN();
-                    follower.followPath(preScoreSample3, true);
-                    setPathState(5);
-                }
-                break;
-        }
-
-    autoDebug(500, "Auto:Declaration", "DONE");
-
-    }
-
+//            case 3:     //goto basket and score
+//                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
+//                if (follower.getPose().getX() > (pickup3Pose.getX() - 1)&&follower.getPose().getY() > (pickup3Pose.getY() - 1)) {
+//                    /* Grab Sample */
+//
+//                    //TODO: do something
+//                    follower.followPath(afterScore2, )
+//                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+//                    setPathState(4);
+//               }
+//                break;
+//            case 4:
+//                if (pathTimer.getElapsedTimeSeconds()>15) {
+//                    follower.followPath(preScoreSample3, true);
+//                    // Intake sample
+//                    autoRobot.Intake.intakeIN();
+//                    follower.followPath(scoreSample3,false);
+//                }
+//                break;
+      }
+        autoDebug(500, "Auto:Declaration", "DONE");
+  }
 
     /** These change the states of the paths and actions
      * It will also reset the timers of the individual switches **/
@@ -245,7 +268,7 @@ public class AutoRedBasket1 extends OpMode {
         pathTimer.resetTimer();
     }
 
-    //**********************************************************************************
+//**********************************************************************************
     @Override
     public void init() {
         pathTimer = new Timer();
@@ -253,6 +276,9 @@ public class AutoRedBasket1 extends OpMode {
         opmodeTimer.resetTimer();
 
         autoRobot.init(hardwareMap);   //TODO: check if conflicts with Follower(hardwareMap);note hardwareMap is default and part of FTC Robot Controller HardwareMap class
+
+        autoRobot.Outtake.wallIntake();
+        autoRobot.Outtake.closeClaw();
 
         poseUpdater = new PoseUpdater(hardwareMap);
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
@@ -265,7 +291,9 @@ public class AutoRedBasket1 extends OpMode {
         autoRobot.Intake.intakeSlideIN();
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetryA.update();
-        autoDebug(500, "Auto:Init", "DONE");
+
+        autoDebug(500, "Auto:init", "DONE");
+
     }
 
     @Override
@@ -277,10 +305,12 @@ public class AutoRedBasket1 extends OpMode {
     public void start() {
         opmodeTimer.resetTimer();
         setPathState(0);
-
+        autoRobot.Outtake.closeClaw();
+        autoRobot.Outtake.highChamberSet();
+        autoDebug(500, "Auto:Start", "DONE");
     }
 
-    //**********************************************************************************
+//**********************************************************************************
     @Override
     public void loop() {
         follower.update();
@@ -293,7 +323,7 @@ public class AutoRedBasket1 extends OpMode {
         telemetryA.addData("x", follower.getPose().getX());
         telemetryA.addData("y", follower.getPose().getY());
         telemetryA.addData("heading", Math.toDegrees(follower.getPose().getHeading()));
-        //telemetry.update();
+       //telemetry.update();
 
 
         //poseUpdater.update();
@@ -324,8 +354,6 @@ public class AutoRedBasket1 extends OpMode {
         RobotLog.i("LOG == " + myName + ": " + myMessage);
     }
 }
-
-
 
 
 
