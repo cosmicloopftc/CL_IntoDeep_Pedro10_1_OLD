@@ -50,7 +50,7 @@ public class AUTOconstant {
     public static double AUTOredSample2X = 98.25;              //-59.25 + 72;     //-(AUTOblueSample5Y);
     public static double AUTOredSample2Y = 12.75;           //-23.625 + 72;    //-(AUTOblueSample5X);
     public static double AUTOredSample3X = 98.25;               //-47.5 + 72;    //-(AUTOblueSample4Y);
-    public static double AUTOredSample3Y = 22.75;            //-23.625 + 72;  //-(AUTOblueSample4X);
+    public static double AUTOredSample3Y = 22.5;            //-23.625 + 72;  //-(AUTOblueSample4X);
     public static double AUTORedNetX = 130.00;           // previsouly: 139              //-71 + 72;
     public static double AUTORedNetY =   14;        //previously: 5               //-58 + 72;
 
