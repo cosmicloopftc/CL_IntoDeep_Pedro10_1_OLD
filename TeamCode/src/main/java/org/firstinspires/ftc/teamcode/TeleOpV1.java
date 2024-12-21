@@ -60,6 +60,7 @@ import com.qualcomm.robotcore.util.Range;
 @Config    //need this to allow appearance in FtcDashboard Configuration to make adjust of variables
 @TeleOp(group="Primary", name= "TeleOpV1.1")
 public class TeleOpV1 extends OpMode {
+    int red, green, blue;
     private Telemetry telemetryA;
 
     //based on Robot-Centric Teleop  from @author Baron Henderson - 20077 The Indubitables
@@ -180,6 +181,17 @@ public class TeleOpV1 extends OpMode {
     public void loop() {
         bulkReadTELEOP();
         botHeading = imuAngle;
+
+
+    red = robot.Sensor.getRed();
+
+    green = robot.Sensor.getGreen();
+    blue = robot.Sensor.getBlue();
+
+    telemetryA.addData("Red: ", red);
+    telemetryA.addData("Green: ", green);
+    telemetryA.addData("Blue: ", blue);
+
 
 
 
