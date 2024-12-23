@@ -83,14 +83,16 @@ public class AutoRedSpecimen1 extends OpMode {
     // private Pose sample1Pose, sample2Pose, sample3Pose, sample4Pose, sample5Pose, sample6Pose, redNet, blueNet;
     private PathChain preLoadSpecScore;
     private PathChain afterScore1, afterScore2, afterScore3;
-    private PathChain sample1, sample2, sample3;
+    private PathChain sample1path1, sample1path2, sample1path3;
+    private PathChain sample2path1, sample2path2, sample2path3;
+    private PathChain sample3path1, sample3path2, sample3path3;
 
 
 
     HardwareNoDriveTrainRobot autoRobot = new HardwareNoDriveTrainRobot();    //TODO: will this interfere with follower(hardwareMap)? in .init
 
     //private Pose startPose = new Pose(23.6 * 5 + 16, 39.75, Math.toRadians(90));  //(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(90));
-    private Pose specScorePose = new Pose(107, 77.5, Math.toRadians(0));
+    private Pose specScorePose = new Pose(105, 77.5, Math.toRadians(0));
     private Pose afterScorePose1 = new Pose(117, 77.5, Math.toRadians(0));
 //    private Pose pickup3Pose = new Pose(AUTOredSample3X + AUTOfrontIntakePickupLength, AUTOredSample3Y, Math.toRadians(180));
     private Pose afterScorePose2 = new Pose(117, 107.5, Math.toRadians(0));
@@ -98,9 +100,10 @@ public class AutoRedSpecimen1 extends OpMode {
     private Pose sample1Pose = new Pose(88, 116.5, Math.toRadians(0));
     private Pose sample2Pose = new Pose(88, 126.5, Math.toRadians(0));
     private Pose sample3Pose = new Pose(88, 131.5, Math.toRadians(0));
-    private Pose observationSample1 = new Pose(131, 116.5, Math.toRadians(0));
-    private Pose observationSample2 = new Pose(131, 126.5, Math.toRadians(0));
-    private Pose observationSample3 = new Pose(131, 131.5, Math.toRadians(0));
+    private Pose observationSample1 = new Pose(143, 116.5, Math.toRadians(0));
+    private Pose observationSample2 = new Pose(143, 126.5, Math.toRadians(0));
+    private Pose observationSample3 = new Pose(143, 131.5, Math.toRadians(0));
+    private Pose preSpecPickup = new Pose(114, 114, Math.toRadians(180));
 
 
 //    //private Pose redScorePose = new Pose(23.6 * 5 + 6, 14, Math.toRadians(135));      //(AUTORedNetX, AUTORedNetY, Math.toRadians(135));;
@@ -146,29 +149,41 @@ public class AutoRedSpecimen1 extends OpMode {
 //                .setLinearHeadingInterpolation(specScorePose.getHeading(), afterScorePose3.getHeading())
 //                .build();
 
-        sample1 = follower.pathBuilder()
+        sample1path1 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(afterScorePose3), new Point(sample1Pose)))
                 .setLinearHeadingInterpolation(afterScorePose3.getHeading(), sample1Pose.getHeading())
+                .build();
+        sample1path2 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(sample1Pose), new Point(observationSample1)))
                 .setLinearHeadingInterpolation(sample1Pose.getHeading(), observationSample1.getHeading())
+                .build();
+        sample1path3 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(observationSample1), new Point(sample1Pose)))
                 .setLinearHeadingInterpolation(observationSample1.getHeading(), sample1Pose.getHeading())
                 .build();
-        sample2 = follower.pathBuilder()
+        sample2path1 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(sample1Pose), new Point(sample2Pose)))
                 .setLinearHeadingInterpolation(sample1Pose.getHeading(), sample2Pose.getHeading())
+                .build();
+        sample2path2 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(sample2Pose), new Point(observationSample2)))
                 .setLinearHeadingInterpolation(sample2Pose.getHeading(), observationSample2.getHeading())
+                .build();
+        sample2path3 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(observationSample2), new Point(sample2Pose)))
                 .setLinearHeadingInterpolation(observationSample2.getHeading(), sample2Pose.getHeading())
                 .build();
-        sample3 = follower.pathBuilder()
+        sample3path1 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(sample2Pose), new Point(sample3Pose)))
                 .setLinearHeadingInterpolation(sample2Pose.getHeading(), sample3Pose.getHeading())
+                .build();
+        sample3path2 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(sample3Pose), new Point(observationSample3)))
                 .setLinearHeadingInterpolation(sample3Pose.getHeading(), observationSample3.getHeading())
-                .addPath(new BezierLine(new Point(observationSample3), new Point(sample3Pose)))
-                .setLinearHeadingInterpolation(observationSample3.getHeading(), sample3Pose.getHeading())
+                .build();
+        sample3path3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(observationSample3), new Point(preSpecPickup)))
+                .setLinearHeadingInterpolation(observationSample3.getHeading(), preSpecPickup.getHeading())
                 .build();
 
 
@@ -214,12 +229,13 @@ public class AutoRedSpecimen1 extends OpMode {
                 break;
             case 1:     //goto specimen 3 and pick it up
 //                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (pathTimer.getElapsedTimeSeconds()>5) {
+                if (pathTimer.getElapsedTimeSeconds()>2) {
                     autoDebug(500, "Auto:case 1; 5 sec ", "score specimen");
                     autoRobot.Outtake.highChamberFinish();
                     autoDebug(500, "Auto:case 1; ", "lower slide to wall pickup");
                     follower.followPath(afterScore1, true);
-                    follower.setMaxPower(0.2);
+
+                    follower.setMaxPower(1);
                     autoDebug(500, "Auto:case 1; ", "move back from Submersible");
                     setPathState(2);
 
@@ -227,9 +243,10 @@ public class AutoRedSpecimen1 extends OpMode {
                 break;
             case 2:     //goto specimen 3 and pick it up
 //                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (pathTimer.getElapsedTimeSeconds()>3) {
+                if (pathTimer.getElapsedTimeSeconds()>1) {
                     /* Score Preload */
                     //TODO: rotate outtake and open claw/outtake to drop sample
+                    follower.followPath(afterScore2, true);
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     //then go to next path--go to Specimen 3 pickup position
@@ -238,26 +255,78 @@ public class AutoRedSpecimen1 extends OpMode {
                 }
 
                 break;
-//            case 3:     //goto basket and score
-//                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
-//                if (follower.getPose().getX() > (pickup3Pose.getX() - 1)&&follower.getPose().getY() > (pickup3Pose.getY() - 1)) {
-//                    /* Grab Sample */
-//
-//                    //TODO: do something
-//                    follower.followPath(afterScore2, )
-//                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-//                    setPathState(4);
-//               }
-//                break;
-//            case 4:
-//                if (pathTimer.getElapsedTimeSeconds()>15) {
-//                    follower.followPath(preScoreSample3, true);
-//                    // Intake sample
-//                    autoRobot.Intake.intakeIN();
-//                    follower.followPath(scoreSample3,false);
-//                }
-//                break;
-      }
+            case 3:     //goto basket and score
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
+                if (pathTimer.getElapsedTimeSeconds()>1) {
+                    /* Grab Sample */
+
+                    //TODO: do something
+                    follower.followPath(afterScore3, true);
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                    setPathState(4);
+               }
+                break;
+            case 4:
+                if (pathTimer.getElapsedTimeSeconds()>1) {
+                    follower.followPath(sample1path1, true);
+                    setPathState(5);
+                }
+                break;
+            case 5:
+                if (pathTimer.getElapsedTimeSeconds()>1) {
+                    follower.followPath(sample1path2, true);
+                    setPathState(6);
+                }
+                break;
+            case 6:
+                if (pathTimer.getElapsedTimeSeconds()>1) {
+                    follower.followPath(sample1path3, true);
+                    setPathState(7);
+                }
+                break;
+
+            case 7:
+                if (pathTimer.getElapsedTimeSeconds()>1) {
+                    follower.followPath(sample2path1, true);
+                    setPathState(8);
+                }
+                break;
+            case 8:
+                if (pathTimer.getElapsedTimeSeconds()>1) {
+                    follower.followPath(sample2path2, true);
+                    setPathState(9);
+                }
+                break;
+            case 9:
+                if (pathTimer.getElapsedTimeSeconds()>1) {
+                    follower.followPath(sample2path3, true);
+                    setPathState(10);
+                }
+                break;
+
+            case 10:
+                if (pathTimer.getElapsedTimeSeconds()>1) {
+                    follower.followPath(sample3path1, true);
+                    setPathState(11);
+                }
+                break;
+            case 11:
+                if (pathTimer.getElapsedTimeSeconds()>1) {
+                    follower.followPath(sample3path2, true);
+                    setPathState(12);
+                }
+                break;
+            case 12:
+                if (pathTimer.getElapsedTimeSeconds()>1) {
+                    autoRobot.Outtake.wallIntake();
+                    autoRobot.Outtake.openClaw();
+                    follower.followPath(sample3path3, true);
+                    setPathState(13);
+                }
+                break;
+
+
+    }
         autoDebug(500, "Auto:Declaration", "DONE");
   }
 
@@ -286,7 +355,7 @@ public class AutoRedSpecimen1 extends OpMode {
         follower.setStartingPose(startPose);
         buildPaths();
 
-        autoRobot.Outtake.groundPositionClose();
+      //  autoRobot.Outtake.groundPositionClose();
         autoRobot.Intake.intakeUP();
         autoRobot.Intake.intakeSlideIN();
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());

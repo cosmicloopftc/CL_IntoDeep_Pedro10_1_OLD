@@ -92,7 +92,7 @@ public class AutoRedBasket1 extends OpMode {
     private PathChain preLoadScore, preLoadScoreStop;
     private PathChain prePickupSample3, pickupSample3, pickupSample2, pickupSample1;
     private PathChain scoreSample3, preScoreSample3, scoreSample2, scoreSample1;
-
+    private PathChain pickupSample3one, pickupSample3two;
 
 
     HardwareNoDriveTrainRobot autoRobot = new HardwareNoDriveTrainRobot();    //TODO: will this interfere with follower(hardwareMap)? in .init
@@ -112,7 +112,8 @@ public class AutoRedBasket1 extends OpMode {
     private Pose redScorePose = new Pose(121, 14, Math.toRadians(135));
 
     private Pose prePickup3Pose = new Pose(130, 19.5, Math.toRadians(180));
-    private Pose pickup3Pose = new Pose(125, 19.5, Math.toRadians(180));
+    private Pose pickup3Pose1 = new Pose(125, 19.5, Math.toRadians(180));
+    private Pose pickup3Pose2 = new Pose(115, 19.5, Math.toRadians(180));
 
     //private Pose startPose = new Pose(144, 0, Math.toRadians(90));
     //private Pose redScorePose = new Pose(104, 0, Math.toRadians(90));
@@ -139,13 +140,17 @@ public class AutoRedBasket1 extends OpMode {
                 .addPath(new BezierLine(new Point(redScorePose), new Point(prePickup3Pose)))
                 .setLinearHeadingInterpolation(redScorePose.getHeading(), prePickup3Pose.getHeading())            //one Heading only
                 .build();
-        pickupSample3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(prePickup3Pose), new Point(pickup3Pose)))
-                .setLinearHeadingInterpolation(prePickup3Pose.getHeading(), pickup3Pose.getHeading())            //one Heading only
+        pickupSample3one = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(prePickup3Pose), new Point(pickup3Pose1)))
+                .setLinearHeadingInterpolation(prePickup3Pose.getHeading(), pickup3Pose1.getHeading())            //one Heading only
+                .build();
+        pickupSample3two = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(pickup3Pose1), new Point(pickup3Pose2)))
+                .setLinearHeadingInterpolation(pickup3Pose1.getHeading(), pickup3Pose2.getHeading())
                 .build();
         preScoreSample3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pickup3Pose), new Point(preRedScorePose)))
-                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), preRedScorePose.getHeading())
+                .addPath(new BezierLine(new Point(pickup3Pose2), new Point(redScorePose)))
+                .setLinearHeadingInterpolation(pickup3Pose2.getHeading(), redScorePose.getHeading())
                 .build();
 
     }
@@ -176,10 +181,10 @@ public class AutoRedBasket1 extends OpMode {
                 break;
             case 1:     //goto specimen 3 and pick it up
 //                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (pathTimer.getElapsedTimeSeconds()>2.5) {
+                if (pathTimer.getElapsedTimeSeconds() > 2.5) {
                     autoDebug(500, "Auto:1; after 2.5sec", "Go to basket");
                     follower.followPath(preLoadScore, true);
-                    follower.setMaxPower(0.2);
+                    follower.setMaxPower(1);
                     setPathState(2);
 
                 }
@@ -197,7 +202,7 @@ public class AutoRedBasket1 extends OpMode {
                     autoRobot.Intake.intakeSlideIN();
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     //then go to next path--go to Specimen 3 pickup position
-                    follower.followPath(prePickupSample3,false);
+              //      follower.followPath(pickupSample3one, false);
                     autoDebug(500, "Auto:2; prePickupSample3", "heading toward prePickupSample3");
                     setPathState(3);
                 }
@@ -205,7 +210,7 @@ public class AutoRedBasket1 extends OpMode {
                 break;
             case 3:     //goto basket and score
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
-                if (pathTimer.getElapsedTimeSeconds()>3) {
+                if (pathTimer.getElapsedTimeSeconds() > 3) {
                     /* Grab Sample */
 
                     //TODO: do something
@@ -215,25 +220,38 @@ public class AutoRedBasket1 extends OpMode {
                     autoRobot.Intake.intakeSlideOUT();
                     // Move intake down
                     autoRobot.Intake.intakeDOWN();
-                    follower.followPath(pickupSample3, true);
-                    follower.setMaxPower(0.2);
+                    follower.followPath(pickupSample3one, true);
+                    follower.setMaxPower(1);
                     autoDebug(500, "Auto:3", "heading toward Sample 3");
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     setPathState(4);
                 }
                 break;
             case 4:
-                if (pathTimer.getElapsedTimeSeconds()>3) {
+                if (pathTimer.getElapsedTimeSeconds() > 3) {
                     // Intake sample
                     autoDebug(500, "Auto:4; 3 sec", "heading toward preRedBasket");
                     autoRobot.Intake.intakeIN();
-                    follower.followPath(preScoreSample3, true);
+                    follower.followPath(pickupSample3two, true);
                     setPathState(5);
                 }
                 break;
-        }
 
-    autoDebug(500, "Auto:Declaration", "DONE");
+            case 5:
+                if (pathTimer.getElapsedTimeSeconds() > 3) {
+                    // Intake sample
+                    autoDebug(500, "Auto:5; 3 sec", "heading toward RedBasket");
+                    autoRobot.Intake.intakeSlideIN();
+                    autoRobot.Intake.intakeUP();
+                    autoRobot.Intake.intakeOUT();
+                    follower.followPath(preScoreSample3, true);
+                    setPathState(6);
+
+                    autoDebug(500, "Auto:Declaration", "DONE");
+                }
+                break;
+
+        }
 
     }
 
