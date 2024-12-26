@@ -19,9 +19,9 @@ import java.util.ArrayList;
 
 
 @Config
-@TeleOp (group="test", name= "TestWIRING FOR DIAGNOSTIC_1.1")
+@TeleOp (group="test", name= "TestWIRING DIAGNOSTIC_1.1")
 public class TestWiringOpMode extends OpMode {
-    TestProgrammingBoard robot = new TestProgrammingBoard();
+    TestHardware robot = new TestHardware();
 
     ArrayList<TestItem> tests;
     boolean wasDown, wasUp;
@@ -68,7 +68,8 @@ public class TestWiringOpMode extends OpMode {
         telemetryA.addLine("");
         //put the test on the telemetry
         TestItem currTest = tests.get(testNum);
-        telemetry.addData("Test:", currTest.getDescription());
+
+        telemetryA.addData("Test:", currTest.getDescription());
         //run or don’t run based on a
         telemetryA.addLine("");
         if(gamepad1.a && !gamepad1.y){
@@ -79,7 +80,7 @@ public class TestWiringOpMode extends OpMode {
             gamepad1.y = true;
             gamepad1.a = false;
         }
-        currTest.run(gamepad1.a, gamepad1.y, telemetry);
+        currTest.run(gamepad1.a, gamepad1.y, telemetryA);
 
         telemetryA.update();
     }

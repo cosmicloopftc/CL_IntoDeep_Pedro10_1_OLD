@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -10,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class HardwareTestDevice {
     public Servo servoTest = null;
-
+    public DcMotorEx motorTest = null;
 
     /*Constructor*/
     public HardwareTestDevice() {
@@ -20,7 +21,7 @@ public class HardwareTestDevice {
     public void init(HardwareMap hardwareMap)    {
         //Save reference to Hardware map
         servoTest = hardwareMap.get(Servo.class, "servoTest");
-
+        motorTest = hardwareMap.get(DcMotorEx.class, "motorTest");
 
 //        //map and setup mode of Intake Slide Motor
 //        intakeSlides = hardwareMap.get(DcMotorEx.class, "intakeSlides");

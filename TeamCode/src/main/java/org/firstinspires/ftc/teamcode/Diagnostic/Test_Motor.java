@@ -16,13 +16,13 @@ public class Test_Motor extends TestItem {
     }
 
     @Override
-    public void run(boolean A_on, boolean Y_on, Telemetry telemetry) {
+    public void run(boolean A_on, boolean Y_on, Telemetry telemetryA) {
         if (A_on || Y_on) {
             motor.setPower(speed);
         } else {
             motor.setPower(0.0);
         }
 
-        telemetry.addData("Motor Encoder = ", motor.getCurrentPosition());
+        telemetryA.addData("Motor Encoder = ", motor.getCurrentPosition());
     }
 }
