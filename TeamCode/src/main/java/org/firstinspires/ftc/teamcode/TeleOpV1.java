@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -13,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -183,16 +186,7 @@ public class TeleOpV1 extends OpMode {
         botHeading = imuAngle;
 
 
-    red = robot.Sensor.getRed();
-
-    green = robot.Sensor.getGreen();
-    blue = robot.Sensor.getBlue();
-
-    telemetryA.addData("Red: ", red);
-    telemetryA.addData("Green: ", green);
-    telemetryA.addData("Blue: ", blue);
-
-
+        telemetry.addData("HSV value: ", robot.Sensor.detected_color);
 
 
 
@@ -237,6 +231,7 @@ public class TeleOpV1 extends OpMode {
                 if (robot.Intake.intakeSlides.getCurrentPosition() < 10 && robot.Intake.leftIntakeServo.getPosition() == 1 && gamepad1.right_trigger > 0.2) {
                     robot.Intake.intakeOUT();
                     state = State.TRANSFER;
+
                 }
                 break;
             case INTAKE:

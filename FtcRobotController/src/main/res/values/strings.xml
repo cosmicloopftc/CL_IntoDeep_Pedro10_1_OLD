@@ -68,5 +68,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <string translatable="false" name="pref_ftc_season_year_of_current_rc">pref_ftc_season_year_of_current_rc_new</string>
 
   <string name="packageName">@string/packageNameRobotController</string>
+    <string name="permReadPhoneState" />
+    <string name="permGenericExplain" />
+    <string name="permAccessLocationExplain" />
+    <string name="permRcCameraExplain" />
+    <string name="permRcReadExternalStorageExplain" />
+    <string name="permRcWriteExternalStorageExplain" />
+    <string name="pref_rc_connected" />
+    <string name="pref_warn_about_2_4_ghz_band" />
+    <string name="pref_warn_about_obsolete_software" />
+    <string name="pref_warn_about_incorrect_clocks" />
+    <string name="pref_warn_about_mismatched_app_versions" />
+    <string name="pref_wifi_automute" />
+    <string name="pref_pairing_kind" />
+    <string name="toastRobotSetupComplete" />
+    <string name="toastRestartRobotComplete" />
+    <string name="appThemeChangeRestartNotifyRC" />
+    <string name="pref_app_theme" />
 
 </resources>
