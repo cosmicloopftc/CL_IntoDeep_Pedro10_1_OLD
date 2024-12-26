@@ -181,9 +181,9 @@ public class TeleOpV1 extends OpMode {
         bulkReadTELEOP();
         botHeading = imuAngle;
 
-
-
-
+        telemetryA.addData("red", robot.Sensor.colorIntake1.red());
+        telemetryA.addData("hue", robot.Sensor.getColorInfo(0));
+        telemetryA.addLine();
 
 
         switch (state) {

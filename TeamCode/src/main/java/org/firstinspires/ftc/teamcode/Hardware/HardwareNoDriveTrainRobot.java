@@ -45,7 +45,7 @@ public class HardwareNoDriveTrainRobot {
     public HardwareIntake Intake = null;
     public HardwareOuttake Outtake = null;
     public HardwareHang Hang = null;
-    public HardwareSensors Sensor = null;
+    public HardwareSensors Sensor = new HardwareSensors();
     public HardwareGamePadLED GamePadLED = null;
     public HardwareLED LED = null;
 
@@ -56,7 +56,7 @@ public class HardwareNoDriveTrainRobot {
     boolean intakeConnected = true;
     boolean outtakeConnected = true;
     boolean hangConnected = false;
-    boolean sensorConnected = false;
+    boolean sensorConnected = true;
     boolean gamePadLEDConnected = false;
     boolean LEDConnected = true;
 
@@ -78,6 +78,7 @@ public class HardwareNoDriveTrainRobot {
     /* Initialize standard Hardware interface */
     public void init(HardwareMap hardwareMap)    {
         //Save reference to Hardware map
+        //Sensor.init(hardwareMap);
 
 
         //TODO: Define and initialize IMU sensor on new Control Hub--new orientation of the control hub
