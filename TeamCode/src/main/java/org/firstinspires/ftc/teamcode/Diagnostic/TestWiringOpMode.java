@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 
 @Config
-@TeleOp (group="test", name= "TestWIRING FOR DIAGNOSTIC_1.1")
+@TeleOp (group="test", name= "Test: DIAGNOSTIC wire?_1.1")
 public class TestWiringOpMode extends OpMode {
     TestProgrammingBoard robot = new TestProgrammingBoard();
 

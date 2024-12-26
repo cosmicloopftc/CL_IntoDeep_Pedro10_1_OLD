@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+
+import android.graphics.Color;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -8,7 +12,10 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
@@ -16,6 +23,7 @@ import java.util.List;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.HardwareDrivetrain;
 import org.firstinspires.ftc.teamcode.Hardware.HardwareIntake;
 import org.firstinspires.ftc.teamcode.Hardware.HardwareNoDriveTrainRobot;
@@ -103,6 +111,19 @@ public class TeleOpV1 extends OpMode {
     double y, x, rx, powerShift;
     //double newForward = 0, newRight = 0, driveTheta = 0, r = 0, powerShift = 0;
 
+
+    float colorGain = 2;
+    // Once per loop, we will update this hsvValues array.
+    // first element (0)= hue, second element (1)=saturation, third element (2)= value.
+    // See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
+    // for an explanation of HSV color.
+    final float[] hsvValues = new float[3];
+    // xButtonPreviouslyPressed and xButtonCurrentlyPressed keep track of the previous and current
+    // state of the X button on the gamepad
+    boolean xButtonPreviouslyPressed = false;
+    boolean xButtonCurrentlyPressed = false;
+
+
 //__________________________________________________________________________________________________
     @Override
     public void init() {
@@ -133,6 +154,14 @@ public class TeleOpV1 extends OpMode {
 
 
 
+        // sensor a colorGain value to multiple sensor's raw value before normalized color values are calculated.
+        // Color sensors (especially the REV Color Sensor V3) can give very low values
+        // (depending on lighting conditions)--only use small part of 0-1 range available for red, green, and blue values.
+        // In BRIGHTER CONDITION, USE SMALLER GAIN than in dark conditions. If colorGain too high, all
+        // colors will report at or near 1, and you won't be able to determine what color you are
+        // actually looking at. For this reason, it's better to err on the LOWER GAIN (but always greater than or equal to 1).
+
+
         telemetryA.addData(">", "Hardware Initialization complete");
         telemetryA.update();
         runtime.reset();
@@ -146,20 +175,31 @@ public class TeleOpV1 extends OpMode {
         bulkReadTELEOP();
         botHeading = imuAngle;
 
-        robot.LED.LEDinitReady();
+//        robot.LED.LEDinitReady();
+//
+//        telemetryA.setMsTransmissionInterval(50);
+//        telemetryA.addData("Battery Voltage (V): ", "%.1f", battery.getVoltage());
+//        telemetryA.addData("Bot Heading--imu Yaw (degrees): ", "%.1f", botHeading);
+//        telemetryA.addData("Robot Driving Orientation if not PedroPath = ", drivingOrientation);
+//        telemetryA.addLine("");
+//        telemetryA.addData("Outtake left slide position: ", robot.Outtake.outtakeRightSlide.getCurrentPosition());
+//        telemetryA.addData("Outtake right slide position: ",  robot.Outtake.outtakeLeftSlide.getCurrentPosition());
+//        telemetryA.addLine("");
+//        telemetryA.addLine("current check--current spike if stalling");
+//        //when stalling/spike is detected, it means the slide is at lowest or max position and so can reset it as zero position
+//        telemetryA.addData("Outtake left slide motor current (mA): ", "%.1f", robot.Outtake.outtakeRightSlide.getCurrent(CurrentUnit.MILLIAMPS));
+//        telemetryA.addData("Outtake right slide motor current (mA): ",  "%.1f", robot.Outtake.outtakeLeftSlide.getCurrent(CurrentUnit.MILLIAMPS));
+//
+//
+//        telemetryA.addData("red", robot.Sensor.colorTest.red());
+//        telemetryA.addData("hue", robot.Sensor.getColorInfo(0));
+//        telemetryA.addLine();
 
-        telemetryA.setMsTransmissionInterval(50);
-        telemetryA.addData("Battery Voltage (V): ", "%.1f", battery.getVoltage());
-        telemetryA.addData("Bot Heading--imu Yaw (degrees): ", "%.1f", botHeading);
-        telemetryA.addData("Robot Driving Orientation if not PedroPath = ", drivingOrientation);
-        telemetryA.addLine("");
-        telemetryA.addData("Outtake left slide position: ", robot.Outtake.outtakeRightSlide.getCurrentPosition());
-        telemetryA.addData("Outtake right slide position: ",  robot.Outtake.outtakeLeftSlide.getCurrentPosition());
-        telemetryA.addLine("");
-        telemetryA.addLine("current check--current spike if stalling");
-        //when stalling/spike is detected, it means the slide is at lowest or max position and so can reset it as zero position
-        telemetryA.addData("Outtake left slide motor current (mA): ", "%.1f", robot.Outtake.outtakeRightSlide.getCurrent(CurrentUnit.MILLIAMPS));
-        telemetryA.addData("Outtake right slide motor current (mA): ",  "%.1f", robot.Outtake.outtakeLeftSlide.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetryA.addData("Runtime (seconds) = ", "%.1f", getRuntime());
+        telemetryA.addData("Distance Sensor = ", "%.1f", robot.Sensor.getDistance());
+        telemetryAllColorInfo();
+        gamePadColorControl();
+
         telemetryA.update();
     }
 
@@ -180,9 +220,6 @@ public class TeleOpV1 extends OpMode {
     public void loop() {
         bulkReadTELEOP();
         botHeading = imuAngle;
-
-
-
 
 
 
@@ -471,5 +508,63 @@ public class TeleOpV1 extends OpMode {
 
     }
 
+    public void telemetryAllColorInfo(){
+        telemetryA.addData("Gain", colorGain);
+        telemetryA.addLine("");
+        // Tell sensor desired gain value (normally you would do this during initialization, not during loop)
+        robot.Sensor.colorTest.setGain(colorGain);
+        // Get the normalized colors from the sensor
+        NormalizedRGBA colors = robot.Sensor.colorTest.getNormalizedColors();
 
+        /* Use telemetry to display feedback on Driver Station. Show red/green/blue normalized values
+         *from sensor (0 to 1), and equivalent HSV (hue/saturation/value) values.
+         * See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
+         * for explanation of HSV color. */
+        // Update the hsvValues array by passing it to Color.colorToHSV()
+        Color.colorToHSV(colors.toColor(), hsvValues);
+        telemetryA.addData("Red", "%.3f", colors.red);
+        telemetryA.addData("Green", "%.3f", colors.green);
+        telemetryA.addData("Blue", "%.3f", colors.blue);
+        telemetryA.addLine("");
+        telemetryA.addData("Hue", "%.3f", hsvValues[0]);
+        telemetryA.addData("Saturation", "%.3f", hsvValues[1]);
+        telemetryA.addData("Value", "%.3f", hsvValues[2]);
+        telemetryA.addLine("");
+        telemetryA.addData("Alpha", "%.3f", colors.alpha);
+        telemetryA.addLine("");
+        /* If this color sensor also has a distance sensor, display the measured distance.
+         * Note that the reported distance is only useful at very close range, and is impacted by
+         * ambient light and surface reflectivity. */
+        if (robot.Sensor.colorTest instanceof DistanceSensor) {
+            telemetryA.addData("Distance (cm)", "%.3f", ((DistanceSensor) robot.Sensor.colorTest).getDistance(DistanceUnit.CM));
+        }
+    }
+
+    public void gamePadColorControl(){
+        telemetryA.addLine("Hold the A button on gamepad 1 to increase gain, or B to decrease it.\n");
+        telemetryA.addLine("Higher gain values mean that the sensor will report larger numbers for Red, Green, and Blue, and Value\n");
+
+        // Update the gain value if either of the A or B gamepad buttons is being held
+        if (gamepad1.a) {
+            // Only increase the gain by a small amount, since this loop will occur multiple times per second.
+            colorGain += 0.005;
+        } else if (gamepad1.b && colorGain > 1) { // A gain of less than 1 will make the values smaller, which is not helpful.
+            colorGain -= 0.005;
+        }
+        // Check the status of the X button on the gamepad
+        xButtonCurrentlyPressed = gamepad1.x;
+
+        // If the button state is different than what it was, then act
+        if (xButtonCurrentlyPressed != xButtonPreviouslyPressed) {
+            // If the button is (now) down, then toggle the light
+            if (xButtonCurrentlyPressed) {
+                if (robot.Sensor.colorTest instanceof SwitchableLight) {
+                    SwitchableLight light = (SwitchableLight)robot.Sensor.colorTest;
+                    light.enableLight(!light.isLightOn());
+                }
+            }
+        }
+        xButtonPreviouslyPressed = xButtonCurrentlyPressed;
+
+    }
 }
