@@ -25,6 +25,7 @@ public class HardwareIntake {
 
     /*Constructor*/
     public HardwareIntake() {
+
     }
 
     /* Initialize standard Hardware interface */

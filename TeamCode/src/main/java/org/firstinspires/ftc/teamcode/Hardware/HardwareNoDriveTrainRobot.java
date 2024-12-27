@@ -36,7 +36,6 @@ public class HardwareNoDriveTrainRobot {
     //voltage sensor
     public VoltageSensor batteryVoltageSensor;
     public double batteryVoltageSensorThreshold = 9.0;
-
     //*Setup IMU sensor object.
     public IMU imu;
 

@@ -63,7 +63,6 @@ import com.qualcomm.robotcore.util.Range;
 @Config    //need this to allow appearance in FtcDashboard Configuration to make adjust of variables
 @TeleOp(group="Primary", name= "TeleOpV1.1")
 public class TeleOpV1 extends OpMode {
-    int red, green, blue;
     private Telemetry telemetryA;
 
     //based on Robot-Centric Teleop  from @author Baron Henderson - 20077 The Indubitables
@@ -71,7 +70,7 @@ public class TeleOpV1 extends OpMode {
     private Follower follower;
     private final Pose startPose = new Pose(0,0,0);  //TODO: Later, reset this to transfer location from Auto
 
-
+int color;
     private PoseUpdater poseUpdater;
     private DashboardPoseTracker dashboardPoseTracker;
     public static double intakeSlidesCurrent;
@@ -186,7 +185,7 @@ public class TeleOpV1 extends OpMode {
         botHeading = imuAngle;
 
 
-        telemetry.addData("HSV value: ", robot.Sensor.detected_color);
+    telemetryA.addData("Hue: ", robot.Sensor.getColorInfo(0));
 
 
 
