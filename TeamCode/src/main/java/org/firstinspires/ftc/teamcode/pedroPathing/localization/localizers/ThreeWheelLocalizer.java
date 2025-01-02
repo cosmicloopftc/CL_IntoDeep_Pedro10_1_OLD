@@ -55,9 +55,9 @@ public class ThreeWheelLocalizer extends Localizer {
     private Pose rightEncoderPose;
     private Pose strafeEncoderPose;
     private double totalHeading;
-    public static double FORWARD_TICKS_TO_INCHES = 0.001979;    //0.003958;  //0.001979;  //0.003958  // 0.002;   //old = 0.00052189;//8192 * 1.37795 * 2 * Math.PI * 0.5008239963;
-    public static double STRAFE_TICKS_TO_INCHES =  0.0029104;   //-0.0058208;   //-0.0029104;  //(-0.003339)*(38/40)*(38/40);  //-0.002968   //-0.005937   //-0.0031;  // old: -0.0029   //old = 0.00052189;//8192 * 1.37795 * 2 * Math.PI * 0.5018874659;
-    public static double TURN_TICKS_TO_RADIANS =   0.0019919;     //old = 0.00053717;//8192 * 1.37795 * 2 * Math.PI * 0.5;
+    public static double FORWARD_TICKS_TO_INCHES = 0.00195; //0.0019 0.002   //old 0.003958;  //0.001979;  //0.003958  // 0.002;   //old = 0.00052189;//8192 * 1.37795 * 2 * Math.PI * 0.5008239963;
+    public static double STRAFE_TICKS_TO_INCHES =  0.00295; //-0.0029 -0.003    //  V1 0.0029104 //-0.0058208;   //-0.0029104;  //(-0.003339)*(38/40)*(38/40);  //-0.002968   //-0.005937   //-0.0031;  // old: -0.0029   //old = 0.00052189;//8192 * 1.37795 * 2 * Math.PI * 0.5018874659;
+    public static double TURN_TICKS_TO_RADIANS =   0.0018;//0.0018      //old = 0.00053717;//8192 * 1.37795 * 2 * Math.PI * 0.5;
     //for calibration new turn number = old * (expected reading/actual measured)
     /**
      * This creates a new ThreeWheelLocalizer from a HardwareMap, with a starting Pose at (0,0)
@@ -83,21 +83,25 @@ public class ThreeWheelLocalizer extends Localizer {
         //strafeEncoderPose = new Pose(0*(-107.9/25.4+8)+-107.9/25.4+0.25, -1.1/25.4-0.23, Math.toRadians(90));
 
         //BASED ON V1 ROBOT
-        leftEncoderPose = new Pose(0, 5.25, 0);
-        rightEncoderPose = new Pose(0, -5.25, 0);
-        strafeEncoderPose = new Pose(-8.25, 0, Math.toRadians(90));
+//        leftEncoderPose = new Pose(0, 5.25, 0);
+//        rightEncoderPose = new Pose(0, -5.25, 0);
+//        strafeEncoderPose = new Pose(-8.25, 0, Math.toRadians(90));
+
+        leftEncoderPose = new Pose(0, 5.75, 0);
+        rightEncoderPose = new Pose(0, -5.75, 0);
+        strafeEncoderPose = new Pose(-2, 0, Math.toRadians(90));
 
 
         hardwareMap = map;
 
         // TODO***: replace these with your encoder ports
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftRear"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightRear"));
-        strafeEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightFront"));
+        strafeEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightRear"));
 
         // TODO***: reverse any encoders necessary
-       // leftEncoder.setDirection(Encoder.REVERSE);
-      //  rightEncoder.setDirection(Encoder.REVERSE);
+        //leftEncoder.setDirection(Encoder.REVERSE);
+        //rightEncoder.setDirection(Encoder.REVERSE);
         //strafeEncoder.setDirection(Encoder.REVERSE);
 
         setStartPose(setStartPose);

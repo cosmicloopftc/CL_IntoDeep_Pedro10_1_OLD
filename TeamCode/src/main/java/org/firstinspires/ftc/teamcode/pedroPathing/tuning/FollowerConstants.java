@@ -33,8 +33,8 @@ public class FollowerConstants {
     //TODO***: change below for our old robot
     //private static double xMovement = 81.34056;
     //private static double yMovement = 65.43028;
-    private static double xMovement = 60;  //4.1 ForwardVelocityTuner 12/15/2024, battery V=13.6     //57.29327;  // old robot: 56.30806
-    private static double yMovement = 46;  //4.2 Strafe VelocityTuner 12/15/2024, battery V=13.6     //49 on 12/14/2024 before strafe correction of translational    //43.7724;  // old robot: 39.49151
+    private static double xMovement = 58;  //v1: 60    4.1 ForwardVelocityTuner 12/15/2024, battery V=13.6     //57.29327;  // old robot: 56.30806
+    private static double yMovement = 46;  //v2: 46   4.2 Strafe VelocityTuner 12/15/2024, battery V=13.6     //49 on 12/14/2024 before strafe correction of translational    //43.7724;  // old robot: 39.49151
 
     private static double[] convertToPolar = Point.cartesianToPolar(xMovement, -yMovement);
     public static Vector frontLeftVector = MathFunctions.normalizeVector(new Vector(convertToPolar[0],convertToPolar[1]));

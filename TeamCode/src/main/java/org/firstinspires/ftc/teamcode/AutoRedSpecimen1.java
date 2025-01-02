@@ -215,7 +215,7 @@ public class AutoRedSpecimen1 extends OpMode {
 
                 //TODO:start to raise outtake slider, start rotating outtake when halfway up
                 autoRobot.Outtake.closeClaw();
-                autoRobot.Outtake.highChamberSet();
+        //        autoRobot.Outtake.highChamberSet();
                 autoRobot.Intake.intakeUP();
                 autoRobot.Intake.intakeSlideIN();
 //                autoRobot.Outtake.leftSlideSetPositionPower(3400,1);
@@ -231,7 +231,7 @@ public class AutoRedSpecimen1 extends OpMode {
 //                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (pathTimer.getElapsedTimeSeconds()>2) {
                     autoDebug(500, "Auto:case 1; 5 sec ", "score specimen");
-                    autoRobot.Outtake.highChamberFinish();
+        //            autoRobot.Outtake.highChamberFinish();
                     autoDebug(500, "Auto:case 1; ", "lower slide to wall pickup");
                     follower.followPath(afterScore1, true);
 
@@ -375,7 +375,7 @@ public class AutoRedSpecimen1 extends OpMode {
         opmodeTimer.resetTimer();
         setPathState(0);
         autoRobot.Outtake.closeClaw();
-        autoRobot.Outtake.highChamberSet();
+//       autoRobot.Outtake.highChamberSet();
         autoDebug(500, "Auto:Start", "DONE");
     }
 

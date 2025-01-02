@@ -352,22 +352,22 @@ public class TeleOpV1 extends OpMode {
                     robot.Outtake.openClaw();
                     robot.Outtake.wallIntake();
                 }
-                if (robot.Outtake.leftOuttakeArm.getPosition() == 0.05 && gamepad2.left_trigger > 0.2 || gamepad2.right_trigger > 0.2){ // Only if at wall intake position
-                    robot.Outtake.closeClaw();
-                    outtakeOption = "highChamber";
-                }
-
-                if (outtakeOption.equals("highChamber")){
-                    robot.Outtake.highChamberSet();
-                }
-                if (robot.Outtake.leftOuttakeArm.getPosition() == 0.3 && gamepad2.left_bumper || gamepad2.right_bumper){ // Only if at high chamber set position
-                    outtakeOption = "highChamberFinish";
-                }
-
-                if (outtakeOption.equals("highChamberFinish")){
-                    robot.Outtake.highChamberFinish();
-                    //robot.Outtake.openClaw();
-                }
+//                if (robot.Outtake.leftOuttakeArm.getPosition() == 0.05 && gamepad2.left_trigger > 0.2 || gamepad2.right_trigger > 0.2){ // Only if at wall intake position
+//                    robot.Outtake.closeClaw();
+//                    outtakeOption = "highChamber";
+//                }
+//
+//                if (outtakeOption.equals("highChamber")){
+//                    robot.Outtake.highChamberSet();
+//                }
+//                if (robot.Outtake.leftOuttakeArm.getPosition() == 0.3 && gamepad2.left_bumper || gamepad2.right_bumper){ // Only if at high chamber set position
+//                    outtakeOption = "highChamberFinish";
+//                }
+//
+//                if (outtakeOption.equals("highChamberFinish")){
+//                    robot.Outtake.highChamberFinish();
+//                    //robot.Outtake.openClaw();
+//                }
 //                if (robot.Outtake.outtakeLeftSlide.getCurrentPosition() > 800 && robot.Outtake.outtakeLeftSlide.getCurrentPosition() < 1000 && gamepad2.left_bumper || gamepad2.right_bumper){ // If at high chamber finish position
 //                    robot.Outtake.openClaw();
 //                }
@@ -418,17 +418,18 @@ public class TeleOpV1 extends OpMode {
 //Drivetrain Movement:
 //MANUAL DRIVE for Mecanum wheel drive.
         y = -gamepad1.left_stick_y;           // Remember,joystick value is reversed!
-        x = gamepad1.left_stick_x;
-        rx = gamepad1.right_stick_x;
+        rx = -gamepad1.left_stick_x;             // this is strafing  V1=positive
+        x = -gamepad1.right_stick_x;                // this is strafing  V1=positive
+
 
         //Cancel angle movement of gamepad left stick, make move move either up/down or right/left
-        if (Math.abs(y) >= Math.abs(x)) {
-            y = y;
-            x = 0;
-        } else {
-            y = 0;
-            x = x;
-        }
+//        if (Math.abs(y) >= Math.abs(x)) {
+//            y = y;
+//            x = 0;
+//        } else {
+//            y = 0;
+//            x = x;
+//        }
         //DRIVETRAIN
         //baseline speed =  reduce motor speed to 60% max
         double motorPowerDefault = 0.6;
@@ -461,7 +462,7 @@ public class TeleOpV1 extends OpMode {
         - Robot-Centric Mode: true
         --original:  follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
  */
-        follower.setTeleOpMovementVectors(y*powerShift, -x*powerShift, -rx*powerShift, true);
+        follower.setTeleOpMovementVectors(-y*powerShift, -x*powerShift, -rx*powerShift, true);
         //follower.setTeleOpMovementVectors(
         //        Range.clip(-y,-powerShift, +powerShift),
         //        Range.clip(-x,-powerShift, +powerShift),
