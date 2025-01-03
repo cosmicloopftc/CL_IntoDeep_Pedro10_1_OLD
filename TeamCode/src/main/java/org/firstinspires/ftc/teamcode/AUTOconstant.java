@@ -80,7 +80,11 @@ public class AUTOconstant {
     public static double AUTOblueSample4X =-47.5 + 72;
     public static double AUTOblueSample4Y =23.625 + 72;
 
-
+    //HuskyLens Constants
+    public static double targetValue = 160;
+    public static double Kp = 160;
+    public static double Ki = 160;
+    public static double Kd = 160;
 
 
 

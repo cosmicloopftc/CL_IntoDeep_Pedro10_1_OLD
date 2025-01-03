@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOfrontIntakePickupLength;
-import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOredSample1X;
-import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOredSample1Y;
-import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOredSample2X;
-import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOredSample2Y;
+import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOblueSample1X;
+import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOblueSample1Y;
+import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOblueSample2X;
+import static org.firstinspires.ftc.teamcode.AUTOconstant.AUTOblueSample2Y;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -63,8 +63,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 
 @Config
-@Autonomous(name = "Auto Red Basket v1.1", group = "Auto")
-public class AutoRedBasket1 extends OpMode {
+@Autonomous(name = "Auto blue Basket v1.1", group = "Auto")
+public class AutoBlueBasket1 extends OpMode {
     int debugLevel = 499;
 
     private Telemetry telemetryA;
@@ -80,7 +80,7 @@ public class AutoRedBasket1 extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
-    // private Pose sample1Pose, sample2Pose, sample3Pose, sample4Pose, sample5Pose, sample6Pose, redNet, blueNet;
+    // private Pose sample1Pose, sample2Pose, sample3Pose, sample4Pose, sample5Pose, sample6Pose, blueNet, blueNet;
     private PathChain preLoadScore, preLoadScoreStop;
     private PathChain prePickupSample3, pickupSample3, pickupSample2, pickupSample1;
     private PathChain scoreSample3, preScoreSample3, scoreSample2, scoreSample1;
@@ -89,48 +89,48 @@ public class AutoRedBasket1 extends OpMode {
 
     HardwareNoDriveTrainRobot autoRobot = new HardwareNoDriveTrainRobot();    //TODO: will this interfere with follower(hardwareMap)? in .init
 
-    //private Pose startPose = new Pose(23.6 * 5 + 16, 39.75, Math.toRadians(90));  //(AUTOstartRedNetX, AUTOstartRedNetY, Math.toRadians(90));
-    private Pose pickup1Pose = new Pose(AUTOredSample1X + AUTOfrontIntakePickupLength, AUTOredSample1Y, Math.toRadians(180));
-    private Pose pickup2Pose = new Pose(AUTOredSample2X + AUTOfrontIntakePickupLength, AUTOredSample2Y, Math.toRadians(180));
-//    private Pose pickup3Pose = new Pose(AUTOredSample3X + AUTOfrontIntakePickupLength, AUTOredSample3Y, Math.toRadians(180));
+    //private Pose startPose = new Pose(23.6 * 5 + 16, 39.75, Math.toRadians(90));  //(AUTOstartblueNetX, AUTOstartblueNetY, Math.toRadians(90));
+    private Pose pickup1Pose = new Pose(AUTOblueSample1X + AUTOfrontIntakePickupLength, AUTOblueSample1Y, Math.toRadians(180));
+    private Pose pickup2Pose = new Pose(AUTOblueSample2X + AUTOfrontIntakePickupLength, AUTOblueSample2Y, Math.toRadians(180));
+//    private Pose pickup3Pose = new Pose(AUTOblueSample3X + AUTOfrontIntakePickupLength, AUTOblueSample3Y, Math.toRadians(180));
     //private Pose pickup3Pose = new Pose(125, 19.5, Math.toRadians(180));
     //private Pose moveForward = new Pose(120, 19.5, Math.toRadians(180));
 
-//    //private Pose redScorePose = new Pose(23.6 * 5 + 6, 14, Math.toRadians(135));      //(AUTORedNetX, AUTORedNetY, Math.toRadians(135));;
+//    //private Pose blueScorePose = new Pose(23.6 * 5 + 6, 14, Math.toRadians(135));      //(AUTOblueNetX, AUTOblueNetY, Math.toRadians(135));;
 
 
-    private Pose startPose = new Pose(134, 39.75, Math.toRadians(90));
-    private Pose preRedScorePose = new Pose(118, 17, Math.toRadians(135));
-    private Pose redScorePose = new Pose(121, 14, Math.toRadians(135));
+    private Pose startPose = new Pose(10, 104.25, Math.toRadians(270));
+    private Pose preblueScorePose = new Pose(26, 127, Math.toRadians(315));
+    private Pose blueScorePose = new Pose(23, 130, Math.toRadians(315));
 
-    private Pose prePickup3Pose = new Pose(130, 19.5, Math.toRadians(180));
-    private Pose pickup3Pose1 = new Pose(125, 19.5, Math.toRadians(180));
-    private Pose pickup3Pose2 = new Pose(115, 19.5, Math.toRadians(180));
+    private Pose prePickup3Pose = new Pose(10, 124.5, Math.toRadians(0));
+    private Pose pickup3Pose1 = new Pose(19, 124.5, Math.toRadians(0));
+    private Pose pickup3Pose2 = new Pose(29, 124.5, Math.toRadians(0));
 
     //private Pose startPose = new Pose(144, 0, Math.toRadians(90));
-    //private Pose redScorePose = new Pose(104, 0, Math.toRadians(90));
+    //private Pose blueScorePose = new Pose(104, 0, Math.toRadians(90));
     //private Pose startPose = new Pose(144, 0, Math.toRadians(180));
-    //private Pose redScorePose = new Pose(104, 0, Math.toRadians(180));
+    //private Pose blueScorePose = new Pose(104, 0, Math.toRadians(180));
 
 
 
     public void buildPaths() {
-        //preLoadScore = new Path(new BezierLine(new Point(startPose), new Point(redScorePose)));
-        //preLoadScore.setLinearHeadingInterpolation(startPose.getHeading(), redScorePose.getHeading());
+        //preLoadScore = new Path(new BezierLine(new Point(startPose), new Point(blueScorePose)));
+        //preLoadScore.setLinearHeadingInterpolation(startPose.getHeading(), blueScorePose.getHeading());
 
         //pathChain
         preLoadScoreStop = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(startPose), new Point(preRedScorePose)))
-                .setLinearHeadingInterpolation(startPose.getHeading(), preRedScorePose.getHeading())
+                .addPath(new BezierLine(new Point(startPose), new Point(preblueScorePose)))
+                .setLinearHeadingInterpolation(startPose.getHeading(), preblueScorePose.getHeading())
                 .build();
         preLoadScore = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(preRedScorePose), new Point(redScorePose)))
-                .setLinearHeadingInterpolation(preRedScorePose.getHeading(), redScorePose.getHeading())
+                .addPath(new BezierLine(new Point(preblueScorePose), new Point(blueScorePose)))
+                .setLinearHeadingInterpolation(preblueScorePose.getHeading(), blueScorePose.getHeading())
                 .build();
 
         prePickupSample3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(redScorePose), new Point(prePickup3Pose)))
-                .setLinearHeadingInterpolation(redScorePose.getHeading(), prePickup3Pose.getHeading())            //one Heading only
+                .addPath(new BezierLine(new Point(blueScorePose), new Point(prePickup3Pose)))
+                .setLinearHeadingInterpolation(blueScorePose.getHeading(), prePickup3Pose.getHeading())            //one Heading only
                 .build();
         pickupSample3one = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(prePickup3Pose), new Point(pickup3Pose1)))
@@ -141,8 +141,8 @@ public class AutoRedBasket1 extends OpMode {
                 .setLinearHeadingInterpolation(pickup3Pose1.getHeading(), pickup3Pose2.getHeading())
                 .build();
         preScoreSample3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pickup3Pose2), new Point(redScorePose)))
-                .setLinearHeadingInterpolation(pickup3Pose2.getHeading(), redScorePose.getHeading())
+                .addPath(new BezierLine(new Point(pickup3Pose2), new Point(blueScorePose)))
+                .setLinearHeadingInterpolation(pickup3Pose2.getHeading(), blueScorePose.getHeading())
                 .build();
 
     }
@@ -183,7 +183,7 @@ public class AutoRedBasket1 extends OpMode {
                 break;
             case 2:     //goto specimen 3 and pick it up
 //                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (follower.getPose().getX() > (redScorePose.getX() - 1) && follower.getPose().getY() > (redScorePose.getY() - 1)) {
+                if (follower.getPose().getX() > (blueScorePose.getX() - 1) && follower.getPose().getY() > (blueScorePose.getY() - 1)) {
                     /* Score Preload */
                     //TODO: rotate outtake and open claw/outtake to drop sample
                     autoDebug(500, "Auto:2; w/i 1 inch of basket", "score high basket");
@@ -222,7 +222,7 @@ public class AutoRedBasket1 extends OpMode {
             case 4:
                 if (pathTimer.getElapsedTimeSeconds() > 3) {
                     // Intake sample
-                    autoDebug(500, "Auto:4; 3 sec", "heading toward preRedBasket");
+                    autoDebug(500, "Auto:4; 3 sec", "heading toward preblueBasket");
                     autoRobot.Intake.intakeIN();
                     setPathState(5);
                 }
@@ -231,7 +231,7 @@ public class AutoRedBasket1 extends OpMode {
             case 5:
                 if (pathTimer.getElapsedTimeSeconds() > 3) {
                     // Intake sample
-                    autoDebug(500, "Auto:5; 3 sec", "heading toward RedBasket");
+                    autoDebug(500, "Auto:5; 3 sec", "heading toward blueBasket");
                     autoRobot.Intake.intakeSlideIN();
                     autoRobot.Intake.intakeUP();
                     autoRobot.Intake.intakeOUT();
@@ -358,7 +358,7 @@ public class AutoRedBasket1 extends OpMode {
 
 
 //    public void buildPaths() {
-//        Pose sample1Pose = new Pose(AUTOredSample1X, AUTOredSample1Y);
+//        Pose sample1Pose = new Pose(AUTOblueSample1X, AUTOblueSample1Y);
 //        startSample1 = new Path(new BezierLine(new Point(startPose), new Point(sample1Pose);
 //        //Sample1.setLinearHeadingInterpolation(startSample1.getHeading(), initialBackdropGoalPose.getHeading());
 //        startSample1.setPathEndTimeoutConstraint(0);

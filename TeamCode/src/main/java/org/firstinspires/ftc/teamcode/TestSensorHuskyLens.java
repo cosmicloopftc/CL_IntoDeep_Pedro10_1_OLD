@@ -32,18 +32,26 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.dfrobot.HuskyLens;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.robotcore.internal.system.Deadline;
-
-import java.util.concurrent.TimeUnit;
+import static org.firstinspires.ftc.teamcode.AUTOconstant.Kd;
+import static org.firstinspires.ftc.teamcode.AUTOconstant.Ki;
+import static org.firstinspires.ftc.teamcode.AUTOconstant.Kp;
+import static org.firstinspires.ftc.teamcode.AUTOconstant.targetValue;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.dfrobot.HuskyLens;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
+import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.PoseUpdater;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.DashboardPoseTracker;
+import org.firstinspires.ftc.teamcode.util.PIDController_simple;
+
+import java.util.concurrent.TimeUnit;
 
 
 /*
@@ -68,31 +76,35 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 //@Disabled
 @Config
 public class TestSensorHuskyLens extends LinearOpMode {
-
+    PIDController_simple specimenPID = new PIDController_simple(targetValue,Kp,Ki,Kd);
     private final int READ_PERIOD = 1;
+    private Follower follower;
+    private final Pose startPose = new Pose(0,0,0);  //TODO: Later, reset this to transfer location from Auto
 
+    private PoseUpdater poseUpdater;
     private HuskyLens huskyLens;
-
+    private DashboardPoseTracker dashboardPoseTracker;
+    double errorPID;
     @Override
     public void runOpMode()
     {
 
+        poseUpdater = new PoseUpdater(hardwareMap);
+        dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
+        follower = new Follower(hardwareMap);
+
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
         huskyLens = hardwareMap.get(HuskyLens.class, "huskyLens");
-
         /*
          * This sample rate limits the reads solely to allow a user time to observe
          * what is happening on the Driver Station telemetry.  Typical applications
          * would not likely rate limit.
          */
         Deadline rateLimit = new Deadline(READ_PERIOD, TimeUnit.SECONDS);
-
         /*
          * Immediately expire so that the first time through we'll do the read.
          */
         rateLimit.expire();
-
         /*
          * Basic check to see if the device is alive and communicating.  This is not
          * technically necessary here as the HuskyLens class does this in its
@@ -122,7 +134,7 @@ public class TestSensorHuskyLens extends LinearOpMode {
          *
          * Other algorithm choices for FTC might be: OBJECT_RECOGNITION, COLOR_RECOGNITION or OBJECT_CLASSIFICATION.
          */
-        huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
+        huskyLens.selectAlgorithm(HuskyLens.Algorithm.OBJECT_RECOGNITION);
 
         telemetry.update();
         waitForStart();
@@ -165,8 +177,19 @@ public class TestSensorHuskyLens extends LinearOpMode {
                  * These values have Java type int (integer).
                  */
             }
-
-            telemetry.update();
+            if (gamepad1.dpad_up && blocks.length>0){
+                errorPID = specimenPID.update(blocks[0].x);
+                //move forward
+                //grab
+                //relinquish control to driver
         }
+//            y = -gamepad1.left_stick_y;           // Remember,joystick value is reversed!
+//            x = gamepad1.left_stick_x;
+//            rx = gamepad1.right_stick_x;
+            int y = 0;
+
+            follower.setTeleOpMovementVectors(0, errorPID, 0, true);
+
+            follower.update();
     }
-}
+}}
