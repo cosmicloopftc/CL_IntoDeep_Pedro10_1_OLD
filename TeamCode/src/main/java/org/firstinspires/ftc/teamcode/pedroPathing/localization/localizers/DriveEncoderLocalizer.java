@@ -69,6 +69,7 @@ public class DriveEncoderLocalizer extends Localizer {
         rightRear = new Encoder(hardwareMap.get(DcMotorEx.class, rightRearMotorName));
         rightFront = new Encoder(hardwareMap.get(DcMotorEx.class, rightFrontMotorName));
 
+
         // TODO: reverse any encoders necessary
         leftFront.setDirection(Encoder.REVERSE);
         rightRear.setDirection(Encoder.REVERSE);
