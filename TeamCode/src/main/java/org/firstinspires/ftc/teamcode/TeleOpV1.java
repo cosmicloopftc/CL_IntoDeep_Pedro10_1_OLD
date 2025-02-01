@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 
+import com.qualcomm.hardware.dfrobot.HuskyLens;
+
 import android.graphics.Color;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
+import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -19,6 +22,7 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -27,6 +31,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.HardwareDrivetrain;
 import org.firstinspires.ftc.teamcode.Hardware.HardwareIntake;
 import org.firstinspires.ftc.teamcode.Hardware.HardwareNoDriveTrainRobot;
+import org.firstinspires.ftc.teamcode.Hardware.QwiicLEDStrip;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.Hardware.HardwareRobot;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
@@ -70,12 +75,15 @@ import com.qualcomm.robotcore.util.Range;
 public class TeleOpV1 extends OpMode {
     private Telemetry telemetryA;
 
+
+
     //based on Robot-Centric Teleop  from @author Baron Henderson - 20077 The Indubitables
     // * @version 2.0, 11/28/2024
     private Follower follower;
     private final Pose startPose = new Pose(0,0,0);  //TODO: Later, reset this to transfer location from Auto
 
-
+    private HuskyLens huskyLens;
+    private QwiicLEDStrip ledStrip;
     private PoseUpdater poseUpdater;
     private DashboardPoseTracker dashboardPoseTracker;
     public static double intakeSlidesCurrent;
@@ -112,7 +120,7 @@ public class TeleOpV1 extends OpMode {
     //double newForward = 0, newRight = 0, driveTheta = 0, r = 0, powerShift = 0;
 
 
-    float colorGain = 2;
+    double colorGain = 2;
     // Once per loop, we will update this hsvValues array.
     // first element (0)= hue, second element (1)=saturation, third element (2)= value.
     // See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
@@ -122,11 +130,12 @@ public class TeleOpV1 extends OpMode {
     // state of the X button on the gamepad
     boolean xButtonPreviouslyPressed = false;
     boolean xButtonCurrentlyPressed = false;
-
+    HuskyLens.Block[] blocks = huskyLens.blocks();
 
 //__________________________________________________________________________________________________
     @Override
     public void init() {
+        ledStrip = hardwareMap.get(QwiicLEDStrip.class, "led_strip");
         poseUpdater = new PoseUpdater(hardwareMap);
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
         follower = new Follower(hardwareMap);
@@ -175,25 +184,27 @@ public class TeleOpV1 extends OpMode {
         bulkReadTELEOP();
         botHeading = imuAngle;
 
-//        robot.LED.LEDinitReady();
-//
-//        telemetryA.setMsTransmissionInterval(50);
-//        telemetryA.addData("Battery Voltage (V): ", "%.1f", battery.getVoltage());
-//        telemetryA.addData("Bot Heading--imu Yaw (degrees): ", "%.1f", botHeading);
-//        telemetryA.addData("Robot Driving Orientation if not PedroPath = ", drivingOrientation);
-//        telemetryA.addLine("");
-//        telemetryA.addData("Outtake left slide position: ", robot.Outtake.outtakeRightSlide.getCurrentPosition());
-//        telemetryA.addData("Outtake right slide position: ",  robot.Outtake.outtakeLeftSlide.getCurrentPosition());
-//        telemetryA.addLine("");
-//        telemetryA.addLine("current check--current spike if stalling");
-//        //when stalling/spike is detected, it means the slide is at lowest or max position and so can reset it as zero position
-//        telemetryA.addData("Outtake left slide motor current (mA): ", "%.1f", robot.Outtake.outtakeRightSlide.getCurrent(CurrentUnit.MILLIAMPS));
-//        telemetryA.addData("Outtake right slide motor current (mA): ",  "%.1f", robot.Outtake.outtakeLeftSlide.getCurrent(CurrentUnit.MILLIAMPS));
-//
-//
-//        telemetryA.addData("red", robot.Sensor.colorTest.red());
-//        telemetryA.addData("hue", robot.Sensor.getColorInfo(0));
-//        telemetryA.addLine();
+
+/*        robot.LED.LEDinitReady();
+
+        telemetryA.setMsTransmissionInterval(50);
+        telemetryA.addData("Battery Voltage (V): ", "%.1f", battery.getVoltage());
+        telemetryA.addData("Bot Heading--imu Yaw (degrees): ", "%.1f", botHeading);
+        telemetryA.addData("Robot Driving Orientation if not PedroPath = ", drivingOrientation);
+        telemetryA.addLine("");
+        telemetryA.addData("Outtake left slide position: ", robot.Outtake.outtakeRightSlide.getCurrentPosition());
+        telemetryA.addData("Outtake right slide position: ",  robot.Outtake.outtakeLeftSlide.getCurrentPosition());
+        telemetryA.addLine("");
+        telemetryA.addLine("current check--current spike if stalling");
+        //when stalling/spike is detected, it means the slide is at lowest or max position and so can reset it as zero position
+        telemetryA.addData("Outtake left slide motor current (mA): ", "%.1f", robot.Outtake.outtakeRightSlide.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetryA.addData("Outtake right slide motor current (mA): ",  "%.1f", robot.Outtake.outtakeLeftSlide.getCurrent(CurrentUnit.MILLIAMPS));
+
+
+        telemetryA.addData("red", robot.Sensor.colorTest.red());
+        telemetryA.addData("hue", robot.Sensor.getColorInfo(0));
+telemetryA.addLine();
+*/
 
         telemetryA.addData("Runtime (seconds) = ", "%.1f", getRuntime());
         telemetryA.addData("Distance Sensor = ", "%.1f", robot.Sensor.getDistance());
@@ -220,7 +231,6 @@ public class TeleOpV1 extends OpMode {
     public void loop() {
         bulkReadTELEOP();
         botHeading = imuAngle;
-
 
 
         switch (state) {
@@ -253,10 +263,10 @@ public class TeleOpV1 extends OpMode {
                     robot.Intake.intakeUP();
                     robot.Intake.intakeSlideIN();
                 }
-                if (gamepad1.left_trigger > 0.2){
+                if (gamepad1.left_trigger > 0.2) {
                     robot.Intake.intakeIN();
                 }
-                else if (gamepad1.left_bumper){
+                else if (gamepad1.left_bumper) {
                     robot.Intake.intakeOUT();
                 }
                 if (robot.Intake.intakeSlides.getCurrentPosition() < 10 && robot.Intake.leftIntakeServo.getPosition() == 1 && gamepad1.right_trigger > 0.2) {
@@ -270,17 +280,17 @@ public class TeleOpV1 extends OpMode {
                 if (gamepad1.right_trigger > 0.2) {
                     robot.Intake.intakeOUT();
                 }
-                else if (gamepad1.left_trigger > 0.2){
+                else if (gamepad1.left_trigger > 0.2) {
                     robot.Intake.intakeSTOP();
                 }
-                else if (gamepad1.dpad_up || gamepad1.dpad_left || gamepad1.dpad_right){ //Be able to intake again
+                else if (gamepad1.dpad_up || gamepad1.dpad_left || gamepad1.dpad_right) { //Be able to intake again
                     state = State.START;
                 }
                 if(gamepad2.a || outtakeOption.equals("start")) { // this current code would be in transfer state when intake ready
                     robot.Outtake.groundPositionOpen();
                     outtakeOption = "";
                 }
-                else if(gamepad2.left_trigger > 0.2 || gamepad2.right_trigger > 0.2){
+                else if(gamepad2.left_trigger > 0.2 || gamepad2.right_trigger > 0.2) {
                     robot.Outtake.groundPositionClose();
                 }
 //                if(gamepad2.b) { // would having these in this else if statement make sure that the claw is closed?
@@ -303,17 +313,17 @@ public class TeleOpV1 extends OpMode {
 //                    robot.Outtake.closeClaw();
 //                    state = State.OUTTAKE_READY;
 //                }
-                else if(gamepad2.dpad_down){
+                else if(gamepad2.dpad_down) {
                     outtakeOption = "wallIntake";
                     state = State.OUTTAKE_READY;
                 }
                 break;
             case OUTTAKE_READY:
                 robot.Outtake.readyPosition();
-                if(outtakeOption.equals("highBasket") && robot.Outtake.outtakeLeftSlide.getCurrentPosition()>0){
+                if(outtakeOption.equals("highBasket") && robot.Outtake.outtakeLeftSlide.getCurrentPosition()>0) {
                     state = State.OUTTAKE;
                 }
-                if(outtakeOption.equals("wallIntake") && robot.Outtake.outtakeLeftSlide.getCurrentPosition()>400){
+                if(outtakeOption.equals("wallIntake") && robot.Outtake.outtakeLeftSlide.getCurrentPosition()>400) {
                     state = State.OUTTAKE;
                 }
                 break;
@@ -333,37 +343,37 @@ public class TeleOpV1 extends OpMode {
 //                        }
 //                    }
 //                }
-                if (outtakeOption.equals("highBasket")){
+                if (outtakeOption.equals("highBasket")) {
                     robot.Outtake.leftSlideSetPositionPower(3400,1);
-                    robot.Outtake.rightSlideSetPositionPower(3400,1);
-                    if (robot.Outtake.outtakeLeftSlide.getCurrentPosition()>1500){
+                    robot.Outtake.rightSlideSetPositionPower(3400, 1);
+                    if (robot.Outtake.outtakeLeftSlide.getCurrentPosition()>1500) {
                         robot.Outtake.highBasket();
                     }
                 }
-                if (robot.Outtake.outtakeLeftSlide.getCurrentPosition() > 3200 && gamepad2.left_bumper || gamepad2.right_bumper){ // If at high basket position
+                if (robot.Outtake.outtakeLeftSlide.getCurrentPosition() > 3200 && gamepad2.left_bumper || gamepad2.right_bumper) { // If at high basket position
                     robot.Outtake.openClaw();
                 }
-                else if (robot.Outtake.outtakeLeftSlide.getCurrentPosition() > 3200 && gamepad2.a){ // Should robot make sure claw is open before going down
+                else if (robot.Outtake.outtakeLeftSlide.getCurrentPosition() > 3200 && gamepad2.a) { // Should robot make sure claw is open before going down
                     state = State.READY_DOWN;
                 }
 
-                if (outtakeOption.equals("wallIntake")){
+                if (outtakeOption.equals("wallIntake")) {
                     robot.Outtake.openClaw();
                     robot.Outtake.wallIntake();
                 }
-                if (robot.Outtake.leftOuttakeArm.getPosition() == 0.05 && gamepad2.left_trigger > 0.2 || gamepad2.right_trigger > 0.2){ // Only if at wall intake position
+                if (robot.Outtake.leftOuttakeArm.getPosition() == 0.05 && gamepad2.left_trigger > 0.2 || gamepad2.right_trigger > 0.2) { // Only if at wall intake position
                     robot.Outtake.closeClaw();
                     outtakeOption = "highChamber";
                 }
 
-                if (outtakeOption.equals("highChamber")){
+                if (outtakeOption.equals("highChamber")) {
                     robot.Outtake.highChamberSet();
                 }
-                if (robot.Outtake.leftOuttakeArm.getPosition() == 0.3 && gamepad2.left_bumper || gamepad2.right_bumper){ // Only if at high chamber set position
+                if (robot.Outtake.leftOuttakeArm.getPosition() == 0.3 && gamepad2.left_bumper || gamepad2.right_bumper) { // Only if at high chamber set position
                     outtakeOption = "highChamberFinish";
                 }
 
-                if (outtakeOption.equals("highChamberFinish")){
+                if (outtakeOption.equals("highChamberFinish")) {
                     robot.Outtake.highChamberFinish();
                     //robot.Outtake.openClaw();
                 }
@@ -371,36 +381,35 @@ public class TeleOpV1 extends OpMode {
 //                    robot.Outtake.openClaw();
 //                }
 
-                if (robot.Outtake.outtakeLeftSlide.getCurrentPosition() > 600 && robot.Outtake.outtakeLeftSlide.getCurrentPosition() < 800 && robot.Outtake.claw.getPosition() == 0.17 && gamepad2.a){ // Only if at high Chamber finish position and claw is open
+                if (robot.Outtake.outtakeLeftSlide.getCurrentPosition() > 600 && robot.Outtake.outtakeLeftSlide.getCurrentPosition() < 800 && robot.Outtake.claw.getPosition() == 0.17 && gamepad2.a) { // Only if at high Chamber finish position and claw is open
                     state = State.READY_DOWN;
                 }
-                else if (robot.Outtake.outtakeLeftSlide.getCurrentPosition() > 600 && robot.Outtake.outtakeLeftSlide.getCurrentPosition() < 800 && robot.Outtake.claw.getPosition() == 0.17 && gamepad2.dpad_down){ // Only if at high Chamber finish position and claw is open
+                else if (robot.Outtake.outtakeLeftSlide.getCurrentPosition() > 600 && robot.Outtake.outtakeLeftSlide.getCurrentPosition() < 800 && robot.Outtake.claw.getPosition() == 0.17 && gamepad2.dpad_down) { // Only if at high Chamber finish position and claw is open
                     outtakeOption = "wallIntake";
                 }
 
-//                if (gamepad2.a){ // Move slides down
-//                    if (outtakeOption.equals("lowBasket")){ //Makes sure arm does not hit intake when going down
-//                        resetRuntime();
-//                        robot.Outtake.leftOuttakeArm.setPosition(0.98);
-//                        robot.Outtake.rightOuttakeArm.setPosition(0.02);
-//                        if (getRuntime() > 0.1){
-//                            state = State.READY_DOWN;
-//                        }
-//                    }
-//                    else{
-//                        state = State.READY_DOWN;
-//                    }
-//                }
+/*                if (gamepad2.a){ // Move slides down
+                    if (outtakeOption.equals("lowBasket")){ //Makes sure arm does not hit intake when going down
+                        resetRuntime();
+                        robot.Outtake.leftOuttakeArm.setPosition(0.98);
+                        robot.Outtake.rightOuttakeArm.setPosition(0.02);
+                        if (getRuntime() > 0.1){
+                            state = State.READY_DOWN;
+                        }
+                    }
+                    else{
+                        state = State.READY_DOWN;
+                    }
+                }*/
                 break;
             case READY_DOWN:
                 robot.Outtake.readyPosition();
-                if(robot.Outtake.outtakeLeftSlide.getCurrentPosition()<600){
+                if(robot.Outtake.outtakeLeftSlide.getCurrentPosition()<600) {
                     outtakeOption = "start";
                     state = State.START;
                 }
                 break;
         }
-
 
         //Hang testing:
         // Move slides up before hanging
@@ -413,7 +422,7 @@ public class TeleOpV1 extends OpMode {
             robot.Outtake.leftSlideSetPositionPower(1500, 1);
             robot.Outtake.rightSlideSetPositionPower(1500, 1);
         }
-
+        gamepad1.setLedColor(255, 255, 255, 1000);
 //Drivetrain Movement:
 //MANUAL DRIVE for Mecanum wheel drive.
         y = -gamepad1.left_stick_y;           // Remember,joystick value is reversed!
@@ -445,8 +454,7 @@ public class TeleOpV1 extends OpMode {
         powerShift = motorPowerDefault + powerChange;
 
 /**12/18/2024--THIS IS COMMENTED OUT WHEN USING PEDROPATHING TO DRIVE ROBOT
-        drivetrain.drive(y, x, rx, powerShift, botHeading, drivingOrientation);
- */
+        drivetrain.drive(y, x, rx, powerShift, botHeading, drivingOrientation);*/
 
 
 
@@ -492,6 +500,7 @@ public class TeleOpV1 extends OpMode {
         telemetryA.update();
 
 
+
     }
 
 
@@ -508,11 +517,11 @@ public class TeleOpV1 extends OpMode {
 
     }
 
-    public void telemetryAllColorInfo(){
+    public void telemetryAllColorInfo() {
         telemetryA.addData("Gain", colorGain);
         telemetryA.addLine("");
         // Tell sensor desired gain value (normally you would do this during initialization, not during loop)
-        robot.Sensor.colorTest.setGain(colorGain);
+        robot.Sensor.colorTest.setGain((float) colorGain);
         // Get the normalized colors from the sensor
         NormalizedRGBA colors = robot.Sensor.colorTest.getNormalizedColors();
 
@@ -540,8 +549,8 @@ public class TeleOpV1 extends OpMode {
         }
     }
 
-    public void gamePadColorControl(){
-        telemetryA.addLine("Hold the A button on gamepad 1 to increase gain, or B to decrease it.\n");
+    public void gamePadColorControl() {
+        telemetryA.addLine("Hold the A button on gamepad 1 to increase gain, and B to decrease it.\n");
         telemetryA.addLine("Higher gain values mean that the sensor will report larger numbers for Red, Green, and Blue, and Value\n");
 
         // Update the gain value if either of the A or B gamepad buttons is being held
@@ -566,5 +575,95 @@ public class TeleOpV1 extends OpMode {
         }
         xButtonPreviouslyPressed = xButtonCurrentlyPressed;
 
+    }
+
+    public double getSpecimenX() {
+         double x = 0.0;
+        if (blocks.length > 0) {
+            x = blocks[0].x;
+        }
+        return x;
+    }
+  /*  public void specimenPosition() {
+        double middle = 200;
+        double x = getSpecimenX();
+        double deltaX = middle - x;  //(+)deltaX -> specimen is right of robot, (-)deltaX -> specimen is left of robot
+                                    //led from human player perspective is on the left side of the robot (left robot main orientaions)
+        if (deltaX > 10) {
+            robot.LED.LeftSide();    //light up on the left side
+            telemetryA.addLine("Specimen is to the left");
+        } else if (deltaX < -10) {
+            robot.LED.RightSide();   //light up on the right side
+            telemetryA.addLine("Specimen is to the right");
+        } else {
+            robot.LED.SetMiddle();   //light up in the middle
+            telemetryA.addLine("Your centralized");
+        }
+    }
+*/
+    public void setNeopixelColor() {
+        String color = robot.Sensor.getColor();
+
+        switch (color) {
+            case "RED":
+                telemetryA.addLine("Sample: Red");
+                robot.LED.setRed();
+                break;
+            case "YELLOW":
+                telemetryA.addLine("Sample: Yellow");
+                robot.LED.setYellow();
+                break;
+            case "BLUE":
+                telemetryA.addLine("Sample: Blue");
+                robot.LED.setBlue();
+                break;
+            default:
+                telemetryA.addLine("Nothing");
+                robot.LED.setNothing();
+        }
+
+    }
+    public void getRidOfWrongColor(String allianceColor) { //input must be in all caps
+        String color = robot.Sensor.getColor();
+        if (allianceColor == "RED" && color == "BLUE") { //if we're red, and have a blue sample
+            //spit it out
+        } else if (allianceColor == "BLUE" && color == "RED") { // if we're blue, and have a red sample
+            //spit it out
+        }
+    }
+    public void setStickColor(String color) { // all caps
+        switch (color) {
+            case "RED":
+                ledStrip.setColor(Color.parseColor("red"));
+                gamepad1.setLedColor(255, 0, 0, 3000);
+                gamepad2.setLedColor(255, 0, 0, 3000);
+                telemetryA.addLine("RED");
+            case "BLUE":
+                ledStrip.setColor(Color.parseColor("blue"));
+                gamepad1.setLedColor(0, 0, 255, 3000);
+                gamepad2.setLedColor(0, 0, 255, 3000);
+                telemetryA.addLine("BLUE");
+            case "GREEN":
+                ledStrip.setColor(Color.parseColor("green"));
+                gamepad1.setLedColor(0, 255, 0, 3000);
+                gamepad2.setLedColor(0, 255, 0, 3000);
+                telemetryA.addLine("GREEN");
+            case "YELLOW":
+                ledStrip.setColor(Color.parseColor("yellow"));
+                gamepad1.setLedColor(255, 255, 0, 3000);
+                gamepad2.setLedColor(255, 255, 0, 3000);
+                telemetryA.addLine("YELLOW");
+        }
+    }
+
+    public void specimentSetStickColor() {
+        int[] colors = {Color.parseColor("blue")};
+        double position = 2;
+        double n = ((0.5) * position)/10;
+        n = Math.round(n * Math.pow(10, 1)) / Math.pow(10, 1);
+        n*=10;
+        int t = (int) n;
+        ledStrip.changeLength(10);
+        ledStrip.setLEDColorSegment(colors, 0, t-1);
     }
 }

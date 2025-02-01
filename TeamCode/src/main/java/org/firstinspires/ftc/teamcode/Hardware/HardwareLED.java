@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode.Hardware;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.w8wjb.ftc.AdafruitNeoDriver;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+
 import android.graphics.Color;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class HardwareLED {
+    int red = Color.rgb(150, 0, 0);
+    int green = Color.rgb(0, 150, 0);
+    int blue = Color.rgb(0, 0, 150);
+    int yellow = Color.rgb(150, 150, 0);
+
     public AdafruitNeoDriver neopixels;
     public DigitalChannel LEDrightGreen;
     public DigitalChannel LEDrightRed;
@@ -20,14 +21,14 @@ public class HardwareLED {
     public DigitalChannel LEDright2Red;
     public DigitalChannel LEDleft2Red;
     public DigitalChannel LEDleft2Green;
-    public ColorSensor colorSensor;
-
+    public int NUM_PIXELS = 30;
 
     public HardwareLED() {
 
     }
     public void init(HardwareMap hardwareMap) {
 
+/*
         LEDleftGreen = hardwareMap.get(DigitalChannel.class, "leftgreen");               //connect to Digital port 0
         LEDleftRed = hardwareMap.get(DigitalChannel.class, "leftred");                   //connect to Digital port 1
 
@@ -39,12 +40,12 @@ public class HardwareLED {
 
         LEDright2Green = hardwareMap.get(DigitalChannel.class, "right2green");             //connect to Digital port 6
         LEDright2Red = hardwareMap.get(DigitalChannel.class, "right2red");                 //connect to Digital port 7
+*/
 
-//        colorSensor = hardwareMap.get(ColorSensor.class,"colorSensor");
 
 
-//        neopixels = hardwareMap.get(AdafruitNeoDriver.class,"neopixels");
-//        neopixels.setNumberOfPixels(NUM_PIXELS);
+        neopixels = hardwareMap.get(AdafruitNeoDriver.class,"neopixels");
+        neopixels.setNumberOfPixels(NUM_PIXELS);
     }
     public void start() {
 
@@ -52,7 +53,9 @@ public class HardwareLED {
     public void stop() {
 
     }
+
     public void LEDinitReady() {
+/*
         LEDrightGreen.setMode(DigitalChannel.Mode.OUTPUT);
         LEDrightRed.setMode(DigitalChannel.Mode.INPUT);
         LEDrightGreen.setState(true);
@@ -77,10 +80,11 @@ public class HardwareLED {
 //        LEDleftRed.setMode(DigitalChannel.Mode.INPUT);
 //        LEDleftGreen.setState(false);
 //        LEDleftRed.setState(false);
+*/
 
     }
     public void LEDinitError() {
-        LEDrightGreen.setMode(DigitalChannel.Mode.INPUT);
+/*        LEDrightGreen.setMode(DigitalChannel.Mode.INPUT);
         LEDrightRed.setMode(DigitalChannel.Mode.OUTPUT);
         LEDrightGreen.setState(false);
         LEDrightRed.setState(true);
@@ -103,11 +107,26 @@ public class HardwareLED {
         LEDleftGreen.setMode(DigitalChannel.Mode.OUTPUT);
         LEDleftRed.setMode(DigitalChannel.Mode.OUTPUT);
         LEDleftGreen.setState(false);
-        LEDleftRed.setState(true);
+        LEDleftRed.setState(true);*/
     }
 
-    public void LED_QWIICinit() {
-
-
+    public void setYellow() {
+        neopixels.fill(yellow);
+        neopixels.show();
     }
+
+    public void setRed() {
+        neopixels.fill(red);
+        neopixels.show();
+    }
+    public void setBlue() {
+        neopixels.fill(blue);
+        neopixels.show();
+    }
+
+    public void setNothing() {
+        neopixels.fill(0);
+        neopixels.show();
+    }
+
 }

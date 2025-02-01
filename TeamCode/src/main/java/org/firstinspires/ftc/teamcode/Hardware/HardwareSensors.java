@@ -45,10 +45,12 @@ public class HardwareSensors {
 
     /*Constructor*/
     public HardwareSensors() {
+
     }
 
     /* Initialize standard Hardware interface */
     public void init(HardwareMap hardwareMap) {
+
         // Get a reference to the RelativeLayout so we can later change the background
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
@@ -86,7 +88,6 @@ public class HardwareSensors {
             ((SwitchableLight) colorTest).enableLight(true);
 
         }
-
     }
 
 
@@ -94,26 +95,46 @@ public class HardwareSensors {
 
 
     public void start() {
+
     }
 
     public void stop () {
+
     }
 
 
 
 
-    public float getColorInfo(int index) {
-        final float[] hsvValues = new float[3];
+    public String getColor() {
         //take the readings, etc.
         NormalizedRGBA colors = ((NormalizedColorSensor) colorTest).getNormalizedColors();
+        if (colors.green - colors.red <= 0.01) {
+            return "NOTHING";
+        } else if (colors.red > colors.blue && colors.red > colors.green) {
+            return "RED";
+        } else if (colors.green > colors.blue && colors.green > colors.red) {
+            return "YELLOW";
+        } else if (colors.blue > colors.green && colors.blue > colors.red) {
+            return "BLUE";
+        }
+        return "";
+
+    }
+
+    public String GetHueColor() {
+        final float[] hsvValues = new float[3];
+        NormalizedRGBA colors = colorTest.getNormalizedColors();
         Color.colorToHSV(colors.toColor(), hsvValues);
-//        Color.RGBToHSV((int) (colorIntake1.red() * 8),
-//                (int) (colorIntake1.green() * 8),
-//                (int) (colorIntake1.blue() * 8),
-//                hsvValues);
-        //return colorIntake1.red();
-        //return hsvValues[index];
-        return 1;
+
+        if (hsvValues[0] > 150) {
+            return "BLUE";
+        } else if (hsvValues[0] < 120 && hsvValues[0] >= 60) {
+            return "RED";
+        } else if (hsvValues[0] > 10 && hsvValues[0] <= 60) {
+            return "YELLOW";
+        } else {
+            return "NOTHING";
+        }
     }
 
     public double getDistance(){
